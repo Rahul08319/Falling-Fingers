@@ -1,9 +1,10 @@
 interface MenuScreenProps {
   onStart: () => void;
+  onShowLeaderboard: () => void;
   highScore: number;
 }
 
-const MenuScreen = ({ onStart, highScore }: MenuScreenProps) => {
+const MenuScreen = ({ onStart, onShowLeaderboard, highScore }: MenuScreenProps) => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen px-6 relative">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -50,6 +51,13 @@ const MenuScreen = ({ onStart, highScore }: MenuScreenProps) => {
         className="font-display text-xl font-bold px-12 py-4 rounded-2xl bg-primary text-primary-foreground glow-primary active:scale-95 transition-all duration-150 tracking-wider"
       >
         PLAY
+      </button>
+
+      <button
+        onClick={onShowLeaderboard}
+        className="font-display text-sm font-bold px-8 py-3 mt-4 rounded-2xl bg-secondary text-secondary-foreground active:scale-95 transition-all duration-150 tracking-wider"
+      >
+        🏆 LEADERBOARD
       </button>
 
       {highScore > 0 && (

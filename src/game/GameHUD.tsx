@@ -3,19 +3,27 @@ interface GameHUDProps {
   lives: number;
   level: number;
   combo: number;
+  isMuted: boolean;
   onPause: () => void;
+  onToggleMute: () => void;
 }
 
-const GameHUD = ({ score, lives, level, combo, onPause }: GameHUDProps) => {
+const GameHUD = ({ score, lives, level, combo, isMuted, onPause, onToggleMute }: GameHUDProps) => {
   const maxLives = 5;
   return (
     <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-4 py-3">
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
         <button
           onClick={onPause}
           className="font-display text-lg text-muted-foreground active:scale-90 transition-transform p-1"
         >
           ⏸️
+        </button>
+        <button
+          onClick={onToggleMute}
+          className="font-display text-lg text-muted-foreground active:scale-90 transition-transform p-1"
+        >
+          {isMuted ? '🔇' : '🔊'}
         </button>
         <div className="flex items-center gap-1">
           <span className="font-display text-sm text-muted-foreground">LVL</span>

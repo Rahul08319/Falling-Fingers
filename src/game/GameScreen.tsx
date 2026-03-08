@@ -3,6 +3,8 @@ import FingerSprite from './FingerSprite';
 import GameHUD from './GameHUD';
 import ComboPopup from './ComboPopup';
 import PauseOverlay from './PauseOverlay';
+import ParticleExplosion from './ParticleExplosion';
+import { ParticleEvent } from './useGameLoop';
 
 interface GameScreenProps {
   fingers: Finger[];
@@ -11,16 +13,32 @@ interface GameScreenProps {
   level: number;
   combo: number;
   comboPopups: { id: number; x: number; y: number; text: string; color: string }[];
+  particles: ParticleEvent[];
   isPaused: boolean;
+  screenShake: boolean;
+  isMuted: boolean;
   onTap: (id: string) => void;
   onPause: () => void;
   onResume: () => void;
   onMenu: () => void;
+  onRemoveParticle: (id: number) => void;
+  onToggleMute: () => void;
 }
 
-const GameScreen = ({ fingers, score, lives, level, combo, comboPopups, isPaused, onTap, onPause, onResume, onMenu }: GameScreenProps) => {
+const GameScreen = ({
+  fingers, score, lives, level, combo, comboPopups, particles,
+  isPaused, screenShake, isMuted,
+  onTap, onPause, onResume, onMenu, onRemoveParticle, onToggleMute,
+}: GameScreenProps) => {
   return (
-    <div className="relative w-full h-screen overflow-hidden">
+    <div
+      className="relative w-full h-screen overflow-hidden transition-transform"
+      style={{
+        transform: screenShake
+          ? `translate(${(Math.random() - 0.5) * 8}px, ${(Math.random() - 0.5) * 8}px)`
+          : 'none',
+      }}
+    >
       <div
         className="absolute inset-0 opacity-5"
         style={{
@@ -39,7 +57,15 @@ const GameScreen = ({ fingers, score, lives, level, combo, comboPopups, isPaused
         }}
       />
 
-      <GameHUD score={score} lives={lives} level={level} combo={combo} onPause={onPause} />
+      <GameHUD
+        score={score}
+        lives={lives}
+        level={level}
+        combo={combo}
+        isMuted={isMuted}
+        onPause={onPause}
+        onToggleMute={onToggleMute}
+      />
 
       {fingers.map(finger => (
         <FingerSprite key={finger.id} finger={finger} onTap={onTap} />
@@ -47,6 +73,16 @@ const GameScreen = ({ fingers, score, lives, level, combo, comboPopups, isPaused
 
       {comboPopups.map(popup => (
         <ComboPopup key={popup.id} x={popup.x} y={popup.y} text={popup.text} color={popup.color} />
+      ))}
+
+      {particles.map(p => (
+        <ParticleExplosion
+          key={p.id}
+          x={p.x}
+          y={p.y}
+          color={p.color}
+          onDone={() => onRemoveParticle(p.id)}
+        />
       ))}
 
       {isPaused && <PauseOverlay onResume={onResume} onMenu={onMenu} />}

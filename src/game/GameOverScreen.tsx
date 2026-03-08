@@ -1,13 +1,21 @@
+import InitialsInput from './InitialsInput';
+
 interface GameOverScreenProps {
   score: number;
   highScore: number;
   isNewHighScore: boolean;
   maxCombo: number;
+  showInitials: boolean;
   onRestart: () => void;
   onMenu: () => void;
+  onSubmitInitials: (initials: string) => void;
+  onShowLeaderboard: () => void;
 }
 
-const GameOverScreen = ({ score, highScore, isNewHighScore, maxCombo, onRestart, onMenu }: GameOverScreenProps) => {
+const GameOverScreen = ({
+  score, highScore, isNewHighScore, maxCombo, showInitials,
+  onRestart, onMenu, onSubmitInitials, onShowLeaderboard,
+}: GameOverScreenProps) => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen px-6 animate-in fade-in duration-500">
       <div className="text-6xl mb-4">💀</div>
@@ -23,7 +31,7 @@ const GameOverScreen = ({ score, highScore, isNewHighScore, maxCombo, onRestart,
         </div>
       )}
 
-      <div className="bg-card rounded-2xl p-6 mb-8 min-w-[200px] border border-border">
+      <div className="bg-card rounded-2xl p-6 mb-6 min-w-[200px] border border-border">
         <div className="text-center mb-3">
           <span className="font-display text-xs text-muted-foreground tracking-widest">SCORE</span>
           <div className="font-display text-4xl font-black text-primary text-glow">{score}</div>
@@ -42,12 +50,24 @@ const GameOverScreen = ({ score, highScore, isNewHighScore, maxCombo, onRestart,
         )}
       </div>
 
+      {showInitials && (
+        <div className="mb-6">
+          <InitialsInput onSubmit={onSubmitInitials} />
+        </div>
+      )}
+
       <div className="flex flex-col gap-3 w-full max-w-[250px]">
         <button
           onClick={onRestart}
           className="font-display text-lg font-bold px-8 py-3 rounded-2xl bg-primary text-primary-foreground glow-primary active:scale-95 transition-all duration-150 tracking-wider"
         >
           RETRY
+        </button>
+        <button
+          onClick={onShowLeaderboard}
+          className="font-display text-sm font-bold px-8 py-3 rounded-2xl bg-secondary text-secondary-foreground active:scale-95 transition-all duration-150 tracking-wider"
+        >
+          🏆 LEADERBOARD
         </button>
         <button
           onClick={onMenu}

@@ -2,11 +2,12 @@ interface GameOverScreenProps {
   score: number;
   highScore: number;
   isNewHighScore: boolean;
+  maxCombo: number;
   onRestart: () => void;
   onMenu: () => void;
 }
 
-const GameOverScreen = ({ score, highScore, isNewHighScore, onRestart, onMenu }: GameOverScreenProps) => {
+const GameOverScreen = ({ score, highScore, isNewHighScore, maxCombo, onRestart, onMenu }: GameOverScreenProps) => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen px-6 animate-in fade-in duration-500">
       <div className="text-6xl mb-4">💀</div>
@@ -27,12 +28,18 @@ const GameOverScreen = ({ score, highScore, isNewHighScore, onRestart, onMenu }:
           <span className="font-display text-xs text-muted-foreground tracking-widest">SCORE</span>
           <div className="font-display text-4xl font-black text-primary text-glow">{score}</div>
         </div>
-        <div className="text-center">
+        <div className="text-center mb-3">
           <span className="font-display text-xs text-muted-foreground tracking-widest">BEST</span>
           <div className="font-display text-xl font-bold text-secondary" style={{ textShadow: '0 0 10px hsl(280 80% 55% / 0.4)' }}>
             {highScore}
           </div>
         </div>
+        {maxCombo >= 3 && (
+          <div className="text-center">
+            <span className="font-display text-xs text-muted-foreground tracking-widest">MAX COMBO</span>
+            <div className="font-display text-lg font-bold text-accent">{maxCombo}x</div>
+          </div>
+        )}
       </div>
 
       <div className="flex flex-col gap-3 w-full max-w-[250px]">

@@ -1,8 +1,9 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { Finger, FingerSpecialType, GameState } from './types';
+import { Finger, FingerSpecialType, GameState, Difficulty, GameMode, PowerUp, DIFFICULTY_CONFIG } from './types';
 import { useSoundEffects } from './useSoundEffects';
 import { useBackgroundMusic } from './useBackgroundMusic';
 import { isLeaderboardWorthy, addToLeaderboard } from './Leaderboard';
+import { createSeededRandom, getDailySeed } from './dailySeed';
 
 const SPAWN_INTERVAL_BASE = 1200;
 const SPAWN_INTERVAL_MIN = 400;
@@ -11,6 +12,9 @@ const BROKEN_CHANCE_MAX = 0.7;
 const SPEED_BASE = 0.3;
 const SPEED_INCREMENT = 0.02;
 const FIXED_DISPLAY_TIME = 400;
+const POWERUP_SPAWN_CHANCE = 0.012; // per frame
+const SHIELD_DURATION = 8000;
+const SLOWMO_DURATION = 5000;
 
 let nextId = 0;
 
@@ -19,6 +23,14 @@ export interface ParticleEvent {
   x: number;
   y: number;
   color: string;
+}
+
+export interface FloatingPowerUp {
+  id: string;
+  type: 'shield' | 'slowmo';
+  x: number;
+  y: number;
+  speed: number;
 }
 
 export function useGameLoop() {
@@ -39,6 +51,10 @@ export function useGameLoop() {
   const [screenShake, setScreenShake] = useState(false);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [showInitials, setShowInitials] = useState(false);
+  const [difficulty, setDifficulty] = useState<Difficulty>('normal');
+  const [gameMode, setGameMode] = useState<GameMode>('classic');
+  const [powerUps, setPowerUps] = useState<PowerUp[]>([]);
+  const [floatingPowerUps, setFloatingPowerUps] = useState<FloatingPowerUp[]>([]);
 
   const sfx = useSoundEffects();
   const music = useBackgroundMusic();
@@ -50,11 +66,19 @@ export function useGameLoop() {
   const gameStateRef = useRef<GameState>('menu');
   const popupIdRef = useRef(0);
   const particleIdRef = useRef(0);
+  const seededRandRef = useRef<(() => number) | null>(null);
+  const difficultyRef = useRef<Difficulty>('normal');
 
   useEffect(() => { scoreRef.current = score; }, [score]);
   useEffect(() => { livesRef.current = lives; }, [lives]);
   useEffect(() => { comboRef.current = combo; }, [combo]);
   useEffect(() => { gameStateRef.current = gameState; }, [gameState]);
+  useEffect(() => { difficultyRef.current = difficulty; }, [difficulty]);
+
+  const getRand = useCallback(() => {
+    if (seededRandRef.current) return seededRandRef.current();
+    return Math.random();
+  }, []);
 
   const getLevel = useCallback((s: number) => Math.floor(s / 10) + 1, []);
 
@@ -87,15 +111,35 @@ export function useGameLoop() {
     setTimeout(() => setScreenShake(false), 300);
   }, []);
 
+  const isSlowMoActive = useCallback(() => {
+    return powerUps.some(p => p.type === 'slowmo' && p.active);
+  }, [powerUps]);
+
+  const isShieldActive = useCallback(() => {
+    return powerUps.some(p => p.type === 'shield' && p.active);
+  }, [powerUps]);
+
+  const consumeShield = useCallback(() => {
+    setPowerUps(prev => {
+      const idx = prev.findIndex(p => p.type === 'shield' && p.active);
+      if (idx === -1) return prev;
+      const updated = [...prev];
+      updated[idx] = { ...updated[idx], active: false };
+      return updated;
+    });
+  }, []);
+
   const spawnFinger = useCallback(() => {
     const lvl = getLevel(scoreRef.current);
+    const rand = getRand;
     const brokenChance = Math.min(BROKEN_CHANCE_BASE + lvl * 0.03, BROKEN_CHANCE_MAX);
-    const isBroken = Math.random() < brokenChance;
-    const speed = SPEED_BASE + lvl * SPEED_INCREMENT + Math.random() * 0.15;
+    const isBroken = rand() < brokenChance;
+    const cfg = DIFFICULTY_CONFIG[difficultyRef.current];
+    const speed = (SPEED_BASE + lvl * SPEED_INCREMENT + rand() * 0.15) * cfg.speedMult;
 
     let specialType: FingerSpecialType = 'normal';
     if (isBroken) {
-      const roll = Math.random();
+      const roll = rand();
       if (roll < 0.08) specialType = 'golden';
       else if (roll < 0.18) specialType = 'speed';
       else if (roll < 0.23 && lvl >= 3) specialType = 'heal';
@@ -103,34 +147,47 @@ export function useGameLoop() {
 
     const finger: Finger = {
       id: `f-${nextId++}`,
-      x: 10 + Math.random() * 80,
+      x: 10 + rand() * 80,
       y: -5,
       isBroken,
       speed: specialType === 'speed' ? speed * 1.8 : speed,
-      rotation: -15 + Math.random() * 30,
-      fingerType: Math.floor(Math.random() * 5),
+      rotation: -15 + rand() * 30,
+      fingerType: Math.floor(rand() * 5),
       specialType,
       fixed: false,
       opacity: 1,
     };
     return finger;
-  }, [getLevel]);
+  }, [getLevel, getRand]);
 
-  const startGame = useCallback(() => {
+  const startGame = useCallback((mode: GameMode = 'classic', diff: Difficulty = 'normal') => {
+    const cfg = DIFFICULTY_CONFIG[diff];
+    setDifficulty(diff);
+    setGameMode(mode);
     setScore(0);
-    setLives(3);
+    setLives(cfg.lives);
     setLevel(1);
     setCombo(0);
     setMaxCombo(0);
     setFingers([]);
     setComboPopups([]);
     setParticles([]);
+    setPowerUps([]);
+    setFloatingPowerUps([]);
     setIsNewHighScore(false);
     setShowInitials(false);
     scoreRef.current = 0;
-    livesRef.current = 3;
+    livesRef.current = cfg.lives;
     comboRef.current = 0;
     lastSpawnRef.current = 0;
+    difficultyRef.current = diff;
+
+    if (mode === 'daily') {
+      seededRandRef.current = createSeededRandom(getDailySeed());
+    } else {
+      seededRandRef.current = null;
+    }
+
     setCountdown(3);
     setGameState('countdown');
   }, []);
@@ -154,6 +211,8 @@ export function useGameLoop() {
     setFingers([]);
     setComboPopups([]);
     setParticles([]);
+    setPowerUps([]);
+    setFloatingPowerUps([]);
     setShowLeaderboard(false);
     setShowInitials(false);
     music.stopMusic();
@@ -193,6 +252,23 @@ export function useGameLoop() {
     });
     setShowInitials(false);
   }, []);
+
+  const collectPowerUp = useCallback((id: string) => {
+    setFloatingPowerUps(prev => {
+      const pu = prev.find(p => p.id === id);
+      if (!pu) return prev;
+      sfx.playFix();
+      const now = Date.now();
+      const dur = pu.type === 'shield' ? SHIELD_DURATION : SLOWMO_DURATION;
+      setPowerUps(pups => [...pups, { type: pu.type, active: true, duration: dur, startTime: now }]);
+      addPopup(pu.x, pu.y, pu.type === 'shield' ? '🛡️ SHIELD!' : '🐌 SLOW-MO!', 'hsl(var(--primary))');
+      // Auto-expire
+      setTimeout(() => {
+        setPowerUps(pups => pups.filter(p => p.startTime !== now || p.type !== pu.type));
+      }, dur);
+      return prev.filter(p => p.id !== id);
+    });
+  }, [sfx, addPopup]);
 
   const handleTap = useCallback((id: string) => {
     if (gameStateRef.current !== 'playing') return;
@@ -248,6 +324,14 @@ export function useGameLoop() {
         }, FIXED_DISPLAY_TIME);
         return prev.map(f => f.id === id ? { ...f, fixed: true } : f);
       } else {
+        // Tapped healthy finger
+        const shieldActive = powerUps.some(p => p.type === 'shield' && p.active);
+        if (shieldActive) {
+          consumeShield();
+          addPopup(finger.x, finger.y, '🛡️ BLOCKED!', 'hsl(200 80% 55%)');
+          return prev.filter(f => f.id !== id);
+        }
+
         sfx.playLoseLife();
         setCombo(0);
         comboRef.current = 0;
@@ -263,7 +347,17 @@ export function useGameLoop() {
         return prev.filter(f => f.id !== id);
       }
     });
-  }, [endGame, getLevel, getComboMultiplier, addPopup, addParticle, triggerShake, sfx]);
+  }, [endGame, getLevel, getComboMultiplier, addPopup, addParticle, triggerShake, sfx, powerUps, consumeShield]);
+
+  // Update power-up expiration
+  useEffect(() => {
+    if (gameState !== 'playing') return;
+    const interval = setInterval(() => {
+      const now = Date.now();
+      setPowerUps(prev => prev.filter(p => now - p.startTime < p.duration));
+    }, 200);
+    return () => clearInterval(interval);
+  }, [gameState]);
 
   // Game loop
   useEffect(() => {
@@ -278,7 +372,8 @@ export function useGameLoop() {
       lastTime = now;
 
       const lvl = getLevel(scoreRef.current);
-      const spawnInterval = Math.max(SPAWN_INTERVAL_BASE - lvl * 60, SPAWN_INTERVAL_MIN);
+      const cfg = DIFFICULTY_CONFIG[difficultyRef.current];
+      const spawnInterval = Math.max(SPAWN_INTERVAL_BASE * cfg.spawnMult - lvl * 60, SPAWN_INTERVAL_MIN);
 
       if (now - lastSpawnRef.current > spawnInterval) {
         lastSpawnRef.current = now;
@@ -286,15 +381,39 @@ export function useGameLoop() {
         setFingers(prev => [...prev, newFinger]);
       }
 
+      // Possibly spawn power-up
+      if (Math.random() < POWERUP_SPAWN_CHANCE * (delta / 16)) {
+        const puType = Math.random() < 0.5 ? 'shield' : 'slowmo';
+        setFloatingPowerUps(prev => [...prev, {
+          id: `pu-${nextId++}`,
+          type: puType as 'shield' | 'slowmo',
+          x: 10 + Math.random() * 80,
+          y: -5,
+          speed: 0.2 + Math.random() * 0.1,
+        }]);
+      }
+
+      const slowMo = powerUps.some(p => p.type === 'slowmo' && p.active);
+      const speedFactor = slowMo ? 0.4 : 1;
+
       setFingers(prev => {
         const updated: Finger[] = [];
         let lostLife = false;
 
         for (const f of prev) {
           if (f.fixed) { updated.push(f); continue; }
-          const newY = f.y + f.speed * (delta / 16);
+          const newY = f.y + f.speed * speedFactor * (delta / 16);
           if (newY > 105) {
-            if (f.isBroken) lostLife = true;
+            if (f.isBroken) {
+              // Shield blocks missed broken fingers too
+              const shieldActive = powerUps.some(p => p.type === 'shield' && p.active);
+              if (shieldActive) {
+                consumeShield();
+                // Don't lose life
+              } else {
+                lostLife = true;
+              }
+            }
             continue;
           }
           updated.push({ ...f, y: newY });
@@ -315,12 +434,19 @@ export function useGameLoop() {
         return updated;
       });
 
+      // Move floating power-ups
+      setFloatingPowerUps(prev =>
+        prev
+          .map(pu => ({ ...pu, y: pu.y + pu.speed * speedFactor * (delta / 16) }))
+          .filter(pu => pu.y < 105)
+      );
+
       animFrameRef.current = requestAnimationFrame(loop);
     };
 
     animFrameRef.current = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(animFrameRef.current);
-  }, [gameState, spawnFinger, endGame, getLevel, sfx, triggerShake]);
+  }, [gameState, spawnFinger, endGame, getLevel, sfx, triggerShake, powerUps, consumeShield]);
 
   return {
     gameState,
@@ -338,6 +464,10 @@ export function useGameLoop() {
     screenShake,
     showLeaderboard,
     showInitials,
+    difficulty,
+    gameMode,
+    powerUps,
+    floatingPowerUps,
     music,
     startGame,
     goToMenu,
@@ -346,5 +476,6 @@ export function useGameLoop() {
     removeParticle,
     submitInitials,
     setShowLeaderboard,
+    collectPowerUp,
   };
 }

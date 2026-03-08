@@ -1,10 +1,12 @@
-import { Finger } from './types';
+import { Finger, PowerUp } from './types';
 import FingerSprite from './FingerSprite';
 import GameHUD from './GameHUD';
 import ComboPopup from './ComboPopup';
 import PauseOverlay from './PauseOverlay';
 import ParticleExplosion from './ParticleExplosion';
-import { ParticleEvent } from './useGameLoop';
+import PowerUpItem from './PowerUpItem';
+import PowerUpIndicator from './PowerUpIndicator';
+import { ParticleEvent, FloatingPowerUp } from './useGameLoop';
 
 interface GameScreenProps {
   fingers: Finger[];
@@ -17,18 +19,22 @@ interface GameScreenProps {
   isPaused: boolean;
   screenShake: boolean;
   isMuted: boolean;
+  powerUps: PowerUp[];
+  floatingPowerUps: FloatingPowerUp[];
+  gameMode: string;
   onTap: (id: string) => void;
   onPause: () => void;
   onResume: () => void;
   onMenu: () => void;
   onRemoveParticle: (id: number) => void;
   onToggleMute: () => void;
+  onCollectPowerUp: (id: string) => void;
 }
 
 const GameScreen = ({
   fingers, score, lives, level, combo, comboPopups, particles,
-  isPaused, screenShake, isMuted,
-  onTap, onPause, onResume, onMenu, onRemoveParticle, onToggleMute,
+  isPaused, screenShake, isMuted, powerUps, floatingPowerUps, gameMode,
+  onTap, onPause, onResume, onMenu, onRemoveParticle, onToggleMute, onCollectPowerUp,
 }: GameScreenProps) => {
   return (
     <div
@@ -57,6 +63,14 @@ const GameScreen = ({
         }}
       />
 
+      {gameMode === 'daily' && (
+        <div className="absolute top-14 left-1/2 -translate-x-1/2 z-30">
+          <span className="font-display text-[10px] px-2 py-0.5 rounded-full bg-accent/20 text-accent tracking-widest">
+            📅 DAILY
+          </span>
+        </div>
+      )}
+
       <GameHUD
         score={score}
         lives={lives}
@@ -69,6 +83,16 @@ const GameScreen = ({
 
       {fingers.map(finger => (
         <FingerSprite key={finger.id} finger={finger} onTap={onTap} />
+      ))}
+
+      {floatingPowerUps.map(pu => (
+        <PowerUpItem
+          key={pu.id}
+          type={pu.type}
+          x={pu.x}
+          y={pu.y}
+          onCollect={() => onCollectPowerUp(pu.id)}
+        />
       ))}
 
       {comboPopups.map(popup => (
@@ -84,6 +108,8 @@ const GameScreen = ({
           onDone={() => onRemoveParticle(p.id)}
         />
       ))}
+
+      <PowerUpIndicator powerUps={powerUps} />
 
       {isPaused && <PauseOverlay onResume={onResume} onMenu={onMenu} />}
     </div>

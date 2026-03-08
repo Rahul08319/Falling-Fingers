@@ -1,4 +1,5 @@
 import InitialsInput from './InitialsInput';
+import { GameMode } from './types';
 
 interface GameOverScreenProps {
   score: number;
@@ -6,6 +7,7 @@ interface GameOverScreenProps {
   isNewHighScore: boolean;
   maxCombo: number;
   showInitials: boolean;
+  gameMode: GameMode;
   onRestart: () => void;
   onMenu: () => void;
   onSubmitInitials: (initials: string) => void;
@@ -13,7 +15,7 @@ interface GameOverScreenProps {
 }
 
 const GameOverScreen = ({
-  score, highScore, isNewHighScore, maxCombo, showInitials,
+  score, highScore, isNewHighScore, maxCombo, showInitials, gameMode,
   onRestart, onMenu, onSubmitInitials, onShowLeaderboard,
 }: GameOverScreenProps) => {
   return (
@@ -24,6 +26,12 @@ const GameOverScreen = ({
         style={{ textShadow: '0 0 20px hsl(340 90% 55% / 0.6)' }}>
         GAME OVER
       </h2>
+
+      {gameMode === 'daily' && (
+        <span className="font-display text-xs px-3 py-1 rounded-full bg-accent/20 text-accent tracking-widest mb-2">
+          📅 DAILY CHALLENGE
+        </span>
+      )}
 
       {isNewHighScore && (
         <div className="font-display text-sm text-primary text-glow tracking-widest mb-4 animate-pulse">

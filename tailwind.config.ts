@@ -39,6 +39,9 @@ export default {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
         },
+        "finger-healthy": "hsl(var(--finger-healthy))",
+        "finger-broken": "hsl(var(--finger-broken))",
+        "finger-fixed": "hsl(var(--finger-fixed))",
         popover: {
           DEFAULT: "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",

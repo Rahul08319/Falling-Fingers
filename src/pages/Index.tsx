@@ -1,12 +1,45 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useGameLoop } from '@/game/useGameLoop';
+import MenuScreen from '@/game/MenuScreen';
+import GameScreen from '@/game/GameScreen';
+import GameOverScreen from '@/game/GameOverScreen';
 
 const Index = () => {
+  const {
+    gameState,
+    fingers,
+    score,
+    lives,
+    level,
+    highScore,
+    isNewHighScore,
+    startGame,
+    goToMenu,
+    handleTap,
+  } = useGameLoop();
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="w-full h-screen overflow-hidden bg-background">
+      {gameState === 'menu' && (
+        <MenuScreen onStart={startGame} highScore={highScore} />
+      )}
+      {gameState === 'playing' && (
+        <GameScreen
+          fingers={fingers}
+          score={score}
+          lives={lives}
+          level={level}
+          onTap={handleTap}
+        />
+      )}
+      {gameState === 'gameover' && (
+        <GameOverScreen
+          score={score}
+          highScore={highScore}
+          isNewHighScore={isNewHighScore}
+          onRestart={startGame}
+          onMenu={goToMenu}
+        />
+      )}
     </div>
   );
 };

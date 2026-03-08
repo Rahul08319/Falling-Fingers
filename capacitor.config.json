@@ -1,0 +1,9 @@
+{
+  "appId": "app.lovable.0e16bb99daf541e8ae8e27ade13890da",
+  "appName": "Falling Fingers",
+  "webDir": "dist",
+  "server": {
+    "url": "https://0e16bb99-daf5-41e8-ae8e-27ade13890da.lovableproject.com?forceHideBadge=true",
+    "cleartext": true
+  }
+}

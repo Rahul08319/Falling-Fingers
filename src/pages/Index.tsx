@@ -22,6 +22,10 @@ const Index = () => {
     screenShake,
     showLeaderboard,
     showInitials,
+    difficulty,
+    gameMode,
+    powerUps,
+    floatingPowerUps,
     music,
     startGame,
     goToMenu,
@@ -30,6 +34,7 @@ const Index = () => {
     removeParticle,
     submitInitials,
     setShowLeaderboard,
+    collectPowerUp,
   } = useGameLoop();
 
   if (showLeaderboard) {
@@ -64,12 +69,16 @@ const Index = () => {
           isPaused={gameState === 'paused'}
           screenShake={screenShake}
           isMuted={music.isMuted}
+          powerUps={powerUps}
+          floatingPowerUps={floatingPowerUps}
+          gameMode={gameMode}
           onTap={handleTap}
           onPause={togglePause}
           onResume={togglePause}
           onMenu={goToMenu}
           onRemoveParticle={removeParticle}
           onToggleMute={music.toggleMute}
+          onCollectPowerUp={collectPowerUp}
         />
       )}
       {gameState === 'gameover' && (
@@ -79,7 +88,8 @@ const Index = () => {
           isNewHighScore={isNewHighScore}
           maxCombo={maxCombo}
           showInitials={showInitials}
-          onRestart={startGame}
+          gameMode={gameMode}
+          onRestart={() => startGame(gameMode, difficulty)}
           onMenu={goToMenu}
           onSubmitInitials={submitInitials}
           onShowLeaderboard={() => setShowLeaderboard(true)}

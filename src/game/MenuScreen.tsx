@@ -6,7 +6,6 @@ interface MenuScreenProps {
 const MenuScreen = ({ onStart, highScore }: MenuScreenProps) => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen px-6 relative">
-      {/* Background particles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {Array.from({ length: 8 }).map((_, i) => (
           <div
@@ -35,10 +34,16 @@ const MenuScreen = ({ onStart, highScore }: MenuScreenProps) => {
         FINGERS
       </h1>
 
-      <p className="font-body text-lg text-muted-foreground text-center mb-8 max-w-xs leading-relaxed">
+      <p className="font-body text-lg text-muted-foreground text-center mb-4 max-w-xs leading-relaxed">
         Tap the <span className="text-accent font-bold">broken</span> fingers to fix them.
         <br />Don't let them escape!
       </p>
+
+      <div className="flex flex-wrap justify-center gap-2 mb-8 max-w-xs">
+        <span className="text-xs font-display px-2 py-1 rounded-lg bg-card border border-border text-muted-foreground">🌟 Golden = 5x pts</span>
+        <span className="text-xs font-display px-2 py-1 rounded-lg bg-card border border-border text-muted-foreground">⚡ Speed = fast</span>
+        <span className="text-xs font-display px-2 py-1 rounded-lg bg-card border border-border text-muted-foreground">❤️‍🩹 Heal = +1 life</span>
+      </div>
 
       <button
         onClick={onStart}

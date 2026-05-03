@@ -5,10 +5,12 @@ import { getDailyDateString } from './dailySeed';
 interface MenuScreenProps {
   onStart: (mode: GameMode, difficulty: Difficulty) => void;
   onShowLeaderboard: () => void;
+  onShowThemes: () => void;
+  onShowTutorial: () => void;
   highScore: number;
 }
 
-const MenuScreen = ({ onStart, onShowLeaderboard, highScore }: MenuScreenProps) => {
+const MenuScreen = ({ onStart, onShowLeaderboard, onShowThemes, onShowTutorial, highScore }: MenuScreenProps) => {
   const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>('normal');
 
   const difficulties: Difficulty[] = ['easy', 'normal', 'hard'];
@@ -97,12 +99,26 @@ const MenuScreen = ({ onStart, onShowLeaderboard, highScore }: MenuScreenProps) 
       </button>
       <span className="text-[10px] text-muted-foreground font-display mt-1">{getDailyDateString()}</span>
 
-      <button
-        onClick={onShowLeaderboard}
-        className="font-display text-sm font-bold px-8 py-3 mt-3 rounded-2xl bg-secondary text-secondary-foreground active:scale-95 transition-all duration-150 tracking-wider"
-      >
-        🏆 LEADERBOARD
-      </button>
+      <div className="flex gap-2 mt-3">
+        <button
+          onClick={onShowLeaderboard}
+          className="font-display text-xs font-bold px-4 py-3 rounded-2xl bg-secondary text-secondary-foreground active:scale-95 transition-all duration-150 tracking-wider"
+        >
+          🏆 SCORES
+        </button>
+        <button
+          onClick={onShowThemes}
+          className="font-display text-xs font-bold px-4 py-3 rounded-2xl bg-card border border-border text-foreground active:scale-95 transition-all duration-150 tracking-wider"
+        >
+          🎨 THEMES
+        </button>
+        <button
+          onClick={onShowTutorial}
+          className="font-display text-xs font-bold px-4 py-3 rounded-2xl bg-card border border-border text-foreground active:scale-95 transition-all duration-150 tracking-wider"
+        >
+          ❓ HOW
+        </button>
+      </div>
 
       {highScore > 0 && (
         <div className="mt-5 text-center">

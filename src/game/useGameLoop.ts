@@ -283,9 +283,10 @@ export function useGameLoop() {
         setCombo(currentCombo);
         setMaxCombo(m => Math.max(m, currentCombo));
         const multiplier = getComboMultiplier(currentCombo);
+        const slowMoBoost = powerUps.some(p => p.type === 'slowmo' && p.active) ? 2 : 1;
 
-        let points = multiplier;
-        let popupText = `+${points}`;
+        let points = multiplier * slowMoBoost;
+        let popupText = `+${points}${slowMoBoost > 1 ? ' 🐌' : ''}`;
         let popupColor = 'hsl(160 100% 45%)';
         let particleColor = 'hsl(160, 100%, 45%)';
 

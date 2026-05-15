@@ -283,15 +283,16 @@ export function useGameLoop() {
         setCombo(currentCombo);
         setMaxCombo(m => Math.max(m, currentCombo));
         const multiplier = getComboMultiplier(currentCombo);
+        const slowMoBoost = powerUps.some(p => p.type === 'slowmo' && p.active) ? 2 : 1;
 
-        let points = multiplier;
-        let popupText = `+${points}`;
+        let points = multiplier * slowMoBoost;
+        let popupText = `+${points}${slowMoBoost > 1 ? ' 🐌' : ''}`;
         let popupColor = 'hsl(160 100% 45%)';
         let particleColor = 'hsl(160, 100%, 45%)';
 
         if (finger.specialType === 'golden') {
-          points = multiplier * 5;
-          popupText = `+${points} 🌟`;
+          points = multiplier * 5 * slowMoBoost;
+          popupText = `+${points} 🌟${slowMoBoost > 1 ? '🐌' : ''}`;
           popupColor = 'hsl(45 100% 55%)';
           particleColor = 'hsl(45, 100%, 55%)';
           sfx.playGoldenFix();

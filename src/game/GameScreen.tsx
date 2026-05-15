@@ -36,6 +36,9 @@ const GameScreen = ({
   isPaused, screenShake, isMuted, powerUps, floatingPowerUps, gameMode,
   onTap, onPause, onResume, onMenu, onRemoveParticle, onToggleMute, onCollectPowerUp,
 }: GameScreenProps) => {
+  const shieldActive = powerUps.some(p => p.type === 'shield' && p.active);
+  const slowMoActive = powerUps.some(p => p.type === 'slowmo' && p.active);
+
   return (
     <div
       className="relative w-full h-screen overflow-hidden transition-transform"

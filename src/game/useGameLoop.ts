@@ -291,8 +291,8 @@ export function useGameLoop() {
         let particleColor = 'hsl(160, 100%, 45%)';
 
         if (finger.specialType === 'golden') {
-          points = multiplier * 5;
-          popupText = `+${points} 🌟`;
+          points = multiplier * 5 * slowMoBoost;
+          popupText = `+${points} 🌟${slowMoBoost > 1 ? '🐌' : ''}`;
           popupColor = 'hsl(45 100% 55%)';
           particleColor = 'hsl(45, 100%, 55%)';
           sfx.playGoldenFix();

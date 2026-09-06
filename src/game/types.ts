@@ -9,6 +9,7 @@ export interface Finger {
   specialType: FingerSpecialType;
   fixed: boolean;
   opacity: number;
+  bossWave?: number;
 }
 
 export type FingerSpecialType = 'normal' | 'golden' | 'speed' | 'heal';
@@ -19,8 +20,10 @@ export type Difficulty = 'easy' | 'normal' | 'hard';
 
 export type GameMode = 'classic' | 'daily';
 
+export type PowerUpType = 'shield' | 'slowmo' | 'magnet' | 'freeze' | 'comboShield';
+
 export interface PowerUp {
-  type: 'shield' | 'slowmo';
+  type: PowerUpType;
   active: boolean;
   duration: number; // ms remaining
   startTime: number;

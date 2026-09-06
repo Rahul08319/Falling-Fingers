@@ -1,5 +1,7 @@
 import { PowerUp } from './types';
 
+const icons: Record<PowerUp['type'], string> = { shield: '🛡️', slowmo: '🐌', magnet: '🧲', freeze: '❄️', comboShield: '🔥' };
+
 interface PowerUpIndicatorProps {
   powerUps: PowerUp[];
 }
@@ -22,14 +24,14 @@ const PowerUpIndicator = ({ powerUps }: PowerUpIndicatorProps) => {
               className="font-display text-2xl"
               style={{ filter: `brightness(${0.6 + progress * 0.4})` }}
             >
-              {pu.type === 'shield' ? '🛡️' : '🐌'}
+              {icons[pu.type]}
             </div>
             <div className="w-10 h-1 rounded-full bg-muted overflow-hidden">
               <div
                 className="h-full rounded-full transition-all duration-100"
                 style={{
                   width: `${progress * 100}%`,
-                  background: pu.type === 'shield'
+                  background: pu.type === 'shield' || pu.type === 'comboShield'
                     ? 'hsl(var(--primary))'
                     : 'hsl(var(--secondary))',
                 }}

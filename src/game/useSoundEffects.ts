@@ -2,7 +2,7 @@ import { useCallback, useRef } from 'react';
 
 const AudioCtx = typeof window !== 'undefined' ? (window.AudioContext || (window as any).webkitAudioContext) : null;
 
-export function useSoundEffects() {
+export function useSoundEffects(isAudioEnabled = true) {
   const ctxRef = useRef<AudioContext | null>(null);
 
   const getCtx = useCallback(() => {
@@ -13,7 +13,7 @@ export function useSoundEffects() {
 
   const playTone = useCallback((freq: number, duration: number, type: OscillatorType = 'sine', volume = 0.15) => {
     const ctx = getCtx();
-    if (!ctx) return;
+    if (!ctx || !isAudioEnabled) return;
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.type = type;
@@ -24,7 +24,7 @@ export function useSoundEffects() {
     gain.connect(ctx.destination);
     osc.start();
     osc.stop(ctx.currentTime + duration);
-  }, [getCtx]);
+  }, [getCtx, isAudioEnabled]);
 
   const playTap = useCallback(() => {
     playTone(800, 0.08, 'square', 0.08);

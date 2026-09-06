@@ -3,6 +3,7 @@ import { Finger } from './types';
 interface FingerSpriteProps {
   finger: Finger;
   onTap: (id: string) => void;
+  largerTargets?: boolean;
 }
 
 const fingerEmojis = ['👆', '👇', '🖐️', '✋', '🤚'];
@@ -15,7 +16,7 @@ const specialGlow: Record<string, string> = {
   heal: 'drop-shadow(0 0 14px hsl(340 90% 55% / 0.8)) drop-shadow(0 0 24px hsl(340 90% 55% / 0.3))',
 };
 
-const FingerSprite = ({ finger, onTap }: FingerSpriteProps) => {
+const FingerSprite = ({ finger, onTap, largerTargets = false }: FingerSpriteProps) => {
   const handleTap = (e: React.MouseEvent | React.TouchEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -51,7 +52,7 @@ const FingerSprite = ({ finger, onTap }: FingerSpriteProps) => {
         top: `${finger.y}%`,
         transform: `translate(-50%, -50%) rotate(${finger.rotation}deg)`,
         opacity: finger.opacity,
-        fontSize: finger.specialType === 'golden' ? '3.5rem' : finger.isBroken ? '3rem' : '2.5rem',
+        fontSize: `${(finger.specialType === 'golden' ? 3.5 : finger.isBroken ? 3 : 2.5) * (largerTargets ? 1.3 : 1)}rem`,
         filter: glowFilter,
         zIndex: 10,
       }}

@@ -1,11 +1,14 @@
+import { PowerUpType } from './types';
+
 interface PowerUpItemProps {
-  type: 'shield' | 'slowmo';
+  type: PowerUpType;
   x: number;
   y: number;
   onCollect: () => void;
 }
 
 const PowerUpItem = ({ type, x, y, onCollect }: PowerUpItemProps) => {
+  const icon: Record<PowerUpType, string> = { shield: '🛡️', slowmo: '🐌', magnet: '🧲', freeze: '❄️', comboShield: '🔥' };
   return (
     <button
       onClick={onCollect}
@@ -19,11 +22,11 @@ const PowerUpItem = ({ type, x, y, onCollect }: PowerUpItemProps) => {
       }}
     >
       <div className="relative">
-        <span>{type === 'shield' ? '🛡️' : '🐌'}</span>
+        <span>{icon[type]}</span>
         <div
           className="absolute inset-0 rounded-full -z-10"
           style={{
-            background: type === 'shield'
+            background: type === 'shield' || type === 'comboShield'
               ? 'radial-gradient(circle, hsl(var(--primary) / 0.3), transparent 70%)'
               : 'radial-gradient(circle, hsl(var(--secondary) / 0.3), transparent 70%)',
             transform: 'scale(2)',

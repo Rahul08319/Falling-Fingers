@@ -1,19 +1,23 @@
 import { useState } from 'react';
 import { Difficulty, GameMode, DIFFICULTY_CONFIG } from './types';
 import { getDailyDateString } from './dailySeed';
+import { getSeasonalEvent } from './themes';
 
 interface MenuScreenProps {
   onStart: (mode: GameMode, difficulty: Difficulty) => void;
   onShowLeaderboard: () => void;
   onShowThemes: () => void;
   onShowTutorial: () => void;
+  onShowAccessibility: () => void;
+  onShowAchievements: () => void;
   highScore: number;
 }
 
-const MenuScreen = ({ onStart, onShowLeaderboard, onShowThemes, onShowTutorial, highScore }: MenuScreenProps) => {
+const MenuScreen = ({ onStart, onShowLeaderboard, onShowThemes, onShowTutorial, onShowAccessibility, onShowAchievements, highScore }: MenuScreenProps) => {
   const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>('normal');
 
   const difficulties: Difficulty[] = ['easy', 'normal', 'hard'];
+  const seasonal = getSeasonalEvent();
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen px-6 relative">
@@ -49,6 +53,7 @@ const MenuScreen = ({ onStart, onShowLeaderboard, onShowThemes, onShowTutorial, 
         Tap the <span className="text-accent font-bold">broken</span> fingers to fix them.
         <br />Don't let them escape!
       </p>
+      <span className="mb-3 rounded-full border border-[hsl(var(--seasonal-accent)/0.6)] bg-card px-3 py-1 font-display text-[10px] tracking-widest" style={{ color: 'hsl(var(--seasonal-accent))' }}>{seasonal.emoji} SEASONAL · {seasonal.name}</span>
 
       <div className="flex flex-wrap justify-center gap-2 mb-4 max-w-xs">
         <span className="text-xs font-display px-2 py-1 rounded-lg bg-card border border-border text-muted-foreground">🌟 Golden = 5x pts</span>
@@ -118,6 +123,8 @@ const MenuScreen = ({ onStart, onShowLeaderboard, onShowThemes, onShowTutorial, 
         >
           ❓ HOW
         </button>
+        <button onClick={onShowAchievements} className="font-display text-xs font-bold px-4 py-3 rounded-2xl bg-card border border-border text-foreground active:scale-95 transition-all duration-150 tracking-wider">🏅 BADGES</button>
+        <button onClick={onShowAccessibility} className="font-display text-xs font-bold px-4 py-3 rounded-2xl bg-card border border-border text-foreground active:scale-95 transition-all duration-150 tracking-wider">♿ ACCESS</button>
       </div>
 
       {highScore > 0 && (

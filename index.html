@@ -20,6 +20,8 @@
 
   <body>
     <div id="root"></div>
+    <!-- Must load before the app bundle for YouTube Playables certification. -->
+    <script src="https://www.youtube.com/game_api/v1"></script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -10,17 +10,19 @@ export function useBackgroundMusic() {
   const [isMuted, setIsMuted] = useState(() => {
     return localStorage.getItem('falling-fingers-muted') === 'true';
   });
+  const [systemAudioEnabled, setSystemAudioEnabled] = useState(true);
+  const isAudioMuted = isMuted || !systemAudioEnabled;
 
   const getCtx = useCallback(() => {
     if (!AudioCtx) return null;
     if (!ctxRef.current) {
       ctxRef.current = new AudioCtx();
       gainRef.current = ctxRef.current.createGain();
-      gainRef.current.gain.setValueAtTime(isMuted ? 0 : 0.06, ctxRef.current.currentTime);
+      gainRef.current.gain.setValueAtTime(isAudioMuted ? 0 : 0.06, ctxRef.current.currentTime);
       gainRef.current.connect(ctxRef.current.destination);
     }
     return ctxRef.current;
-  }, [isMuted]);
+  }, [isAudioMuted]);
 
   const playNote = useCallback((freq: number, duration: number, time: number, type: OscillatorType = 'sine') => {
     const ctx = getCtx();
@@ -78,15 +80,22 @@ export function useBackgroundMusic() {
       const next = !prev;
       localStorage.setItem('falling-fingers-muted', String(next));
       if (gainRef.current && ctxRef.current) {
-        gainRef.current.gain.setValueAtTime(next ? 0 : 0.06, ctxRef.current.currentTime);
+        gainRef.current.gain.setValueAtTime(next || !systemAudioEnabled ? 0 : 0.06, ctxRef.current.currentTime);
       }
       return next;
     });
   }, []);
 
+  const setSystemAudio = useCallback((enabled: boolean) => {
+    setSystemAudioEnabled(enabled);
+    if (gainRef.current && ctxRef.current) {
+      gainRef.current.gain.setValueAtTime(enabled && !isMuted ? 0.06 : 0, ctxRef.current.currentTime);
+    }
+  }, [isMuted]);
+
   useEffect(() => {
     return () => stopMusic();
   }, [stopMusic]);
 
-  return { startMusic, stopMusic, toggleMute, isMuted };
+  return { startMusic, stopMusic, toggleMute, setSystemAudio, isMuted: isAudioMuted };
 }

@@ -1,9 +1,16 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { Finger, FingerSpecialType, GameState, Difficulty, GameMode, PowerUp, DIFFICULTY_CONFIG } from './types';
+import { Finger, FingerSpecialType, GameState, Difficulty, GameMode, PowerUp, PowerUpType, DIFFICULTY_CONFIG } from './types';
 import { useSoundEffects } from './useSoundEffects';
 import { useBackgroundMusic } from './useBackgroundMusic';
 import { isLeaderboardWorthy, addToLeaderboard } from './Leaderboard';
 import { createSeededRandom, getDailySeed } from './dailySeed';
+import { getAccessibility, unlockAchievement } from './progression';
+import { BossWaveState } from './GameProgressPanel';
+import {
+  getPlayablesLanguage, loadPlayablesSave, notifyFirstFrameReady, notifyGameReady,
+  PLAYABLES_SAVE_EVENT, reportPlayablesError, requestPlayablesSave,
+  savePlayablesData, sendPlayablesScore,
+} from './playables';
 
 const SPAWN_INTERVAL_BASE = 1200;
 const SPAWN_INTERVAL_MIN = 400;
@@ -15,6 +22,9 @@ const FIXED_DISPLAY_TIME = 400;
 const POWERUP_SPAWN_CHANCE = 0.012; // per frame
 const SHIELD_DURATION = 8000;
 const SLOWMO_DURATION = 5000;
+const FREEZE_DURATION = 3000;
+const COMBO_SHIELD_DURATION = 15000;
+const BOSS_INTERVAL = 25;
 
 let nextId = 0;
 
@@ -27,14 +37,18 @@ export interface ParticleEvent {
 
 export interface FloatingPowerUp {
   id: string;
-  type: 'shield' | 'slowmo';
+  type: PowerUpType;
   x: number;
   y: number;
   speed: number;
 }
 
 export function useGameLoop() {
+  const music = useBackgroundMusic();
+  const sfx = useSoundEffects(!music.isMuted);
   const [gameState, setGameState] = useState<GameState>('menu');
+  const [isPlayablesReady, setIsPlayablesReady] = useState(false);
+  const [isSystemPaused, setIsSystemPaused] = useState(false);
   const [fingers, setFingers] = useState<Finger[]>([]);
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
@@ -55,9 +69,10 @@ export function useGameLoop() {
   const [gameMode, setGameMode] = useState<GameMode>('classic');
   const [powerUps, setPowerUps] = useState<PowerUp[]>([]);
   const [floatingPowerUps, setFloatingPowerUps] = useState<FloatingPowerUp[]>([]);
+  const [missionProgress, setMissionProgress] = useState(0);
+  const [bossWave, setBossWave] = useState<BossWaveState | null>(null);
+  const adaptiveDifficultyRef = useRef(1);
 
-  const sfx = useSoundEffects();
-  const music = useBackgroundMusic();
   const animFrameRef = useRef<number>(0);
   const lastSpawnRef = useRef(0);
   const scoreRef = useRef(0);
@@ -68,12 +83,96 @@ export function useGameLoop() {
   const particleIdRef = useRef(0);
   const seededRandRef = useRef<(() => number) | null>(null);
   const difficultyRef = useRef<Difficulty>('normal');
+  const musicRef = useRef(music);
+  const pausedBySystemRef = useRef(false);
+  const bossSpawnedRef = useRef<number | null>(null);
 
   useEffect(() => { scoreRef.current = score; }, [score]);
   useEffect(() => { livesRef.current = lives; }, [lives]);
   useEffect(() => { comboRef.current = combo; }, [combo]);
   useEffect(() => { gameStateRef.current = gameState; }, [gameState]);
   useEffect(() => { difficultyRef.current = difficulty; }, [difficulty]);
+  useEffect(() => { musicRef.current = music; }, [music]);
+
+  useEffect(() => {
+    let active = true;
+    let removeAudioListener: (() => void) | undefined;
+    let removePauseListener: (() => void) | undefined;
+    let removeResumeListener: (() => void) | undefined;
+    const saveOnDemand = () => { void savePlayablesData(); };
+    const logUnhandledError = () => reportPlayablesError();
+
+    const initialise = async () => {
+      notifyFirstFrameReady();
+      await loadPlayablesSave();
+      if (!active) return;
+      setHighScore(parseInt(localStorage.getItem('falling-fingers-high') || '0', 10));
+
+      const system = window.ytgame?.system;
+      musicRef.current.setSystemAudio(system?.isAudioEnabled?.() ?? true);
+      removeAudioListener = system?.onAudioEnabledChange?.((enabled) => musicRef.current.setSystemAudio(enabled));
+      removePauseListener = system?.onPause?.(() => {
+        if (gameStateRef.current === 'playing') {
+          pausedBySystemRef.current = true;
+          setIsSystemPaused(true);
+          setGameState('paused');
+          musicRef.current.stopMusic();
+        }
+        requestPlayablesSave();
+      });
+      removeResumeListener = system?.onResume?.(() => {
+        if (pausedBySystemRef.current && gameStateRef.current === 'paused') {
+          pausedBySystemRef.current = false;
+          setIsSystemPaused(false);
+          setGameState('playing');
+          musicRef.current.startMusic();
+        }
+      });
+      const language = await getPlayablesLanguage();
+      if (language && active) document.documentElement.lang = language;
+      if (!active) return;
+      setIsPlayablesReady(true);
+    };
+
+    window.addEventListener(PLAYABLES_SAVE_EVENT, saveOnDemand);
+    window.addEventListener('error', logUnhandledError);
+    window.addEventListener('unhandledrejection', logUnhandledError);
+    void initialise();
+    return () => {
+      active = false;
+      removeAudioListener?.();
+      removePauseListener?.();
+      removeResumeListener?.();
+      window.removeEventListener(PLAYABLES_SAVE_EVENT, saveOnDemand);
+      window.removeEventListener('error', logUnhandledError);
+      window.removeEventListener('unhandledrejection', logUnhandledError);
+    };
+  }, []);
+
+  // This runs after React has committed the interactive menu, never while the
+  // loading screen is still the only visible UI.
+  useEffect(() => {
+    if (isPlayablesReady) notifyGameReady();
+  }, [isPlayablesReady]);
+
+  // Lightweight hooks for deterministic Playwright inspection of the live game.
+  useEffect(() => {
+    const host = window as typeof window & {
+      render_game_to_text?: () => string;
+      advanceTime?: (ms: number) => void;
+    };
+    host.render_game_to_text = () => JSON.stringify({
+      coordinateSystem: 'x/y are percentages; origin is top-left; y increases downward',
+      mode: gameState, score, lives, level, combo, missionProgress,
+      bossWave, fingers: fingers.filter(f => !f.fixed).map(f => ({ id: f.id, x: f.x, y: f.y, broken: f.isBroken, bossWave: f.bossWave })),
+      powerUps: powerUps.filter(p => p.active).map(p => p.type),
+    });
+    host.advanceTime = (ms) => {
+      if (gameStateRef.current !== 'playing') return;
+      setFingers(prev => prev.map(f => f.fixed ? f : { ...f, y: f.y + f.speed * (ms / 16) }));
+    };
+    return () => { delete host.render_game_to_text; delete host.advanceTime; };
+  }, [gameState, score, lives, level, combo, missionProgress, bossWave, fingers, powerUps]);
 
   const getRand = useCallback(() => {
     if (seededRandRef.current) return seededRandRef.current();
@@ -160,6 +259,28 @@ export function useGameLoop() {
     return finger;
   }, [getLevel, getRand]);
 
+  // Every 25 points starts a short boss wave: five broken fingers from a giant hand.
+  useEffect(() => {
+    if (!bossWave?.active || bossSpawnedRef.current === bossWave.wave) return;
+    bossSpawnedRef.current = bossWave.wave;
+    setFingers(prev => [
+      ...prev,
+      ...Array.from({ length: bossWave.target }, (_, index): Finger => ({
+        id: `boss-${bossWave.wave}-${nextId++}`,
+        x: 15 + index * (70 / Math.max(1, bossWave.target - 1)),
+        y: -8 - index * 8,
+        isBroken: true,
+        speed: 0.22 + index * 0.02,
+        rotation: -12 + index * 6,
+        fingerType: index,
+        specialType: 'normal',
+        fixed: false,
+        opacity: 1,
+        bossWave: bossWave.wave,
+      })),
+    ]);
+  }, [bossWave]);
+
   const startGame = useCallback((mode: GameMode = 'classic', diff: Difficulty = 'normal') => {
     const cfg = DIFFICULTY_CONFIG[diff];
     setDifficulty(diff);
@@ -174,6 +295,10 @@ export function useGameLoop() {
     setParticles([]);
     setPowerUps([]);
     setFloatingPowerUps([]);
+    setMissionProgress(0);
+    setBossWave(null);
+    adaptiveDifficultyRef.current = 1;
+    bossSpawnedRef.current = null;
     setIsNewHighScore(false);
     setShowInitials(false);
     scoreRef.current = 0;
@@ -213,18 +338,35 @@ export function useGameLoop() {
     setParticles([]);
     setPowerUps([]);
     setFloatingPowerUps([]);
+    setBossWave(null);
     setShowLeaderboard(false);
     setShowInitials(false);
     music.stopMusic();
   }, [music]);
 
   const togglePause = useCallback(() => {
+    if (pausedBySystemRef.current) return;
     setGameState(prev => {
       if (prev === 'playing') return 'paused';
       if (prev === 'paused') return 'playing';
       return prev;
     });
   }, []);
+
+  const consumePowerUp = useCallback((type: PowerUpType) => {
+    setPowerUps(prev => {
+      const idx = prev.findIndex(p => p.type === type && p.active);
+      if (idx === -1) return prev;
+      const updated = [...prev];
+      updated[idx] = { ...updated[idx], active: false };
+      return updated;
+    });
+  }, []);
+
+  const toggleMute = useCallback(() => {
+    music.toggleMute();
+    requestPlayablesSave();
+  }, [music]);
 
   const endGame = useCallback((finalScore: number) => {
     setGameState('gameover');
@@ -241,7 +383,10 @@ export function useGameLoop() {
     if (isLeaderboardWorthy(finalScore)) {
       setShowInitials(true);
     }
-  }, [sfx, music]);
+    if (gameMode === 'daily') unlockAchievement('daily-finish');
+    sendPlayablesScore(finalScore);
+    requestPlayablesSave();
+  }, [sfx, music, gameMode]);
 
   const submitInitials = useCallback((initials: string) => {
     addToLeaderboard({
@@ -251,6 +396,7 @@ export function useGameLoop() {
       date: new Date().toISOString(),
     });
     setShowInitials(false);
+    requestPlayablesSave();
   }, []);
 
   const collectPowerUp = useCallback((id: string) => {
@@ -259,13 +405,24 @@ export function useGameLoop() {
       if (!pu) return prev;
       sfx.playFix();
       const now = Date.now();
-      const dur = pu.type === 'shield' ? SHIELD_DURATION : SLOWMO_DURATION;
-      setPowerUps(pups => [...pups, { type: pu.type, active: true, duration: dur, startTime: now }]);
-      addPopup(pu.x, pu.y, pu.type === 'shield' ? '🛡️ SHIELD!' : '🐌 SLOW-MO!', 'hsl(var(--primary))');
-      // Auto-expire
-      setTimeout(() => {
-        setPowerUps(pups => pups.filter(p => p.startTime !== now || p.type !== pu.type));
-      }, dur);
+      if (pu.type === 'magnet') {
+        setFingers(fingers => {
+          const target = fingers.find(f => f.isBroken && !f.fixed);
+          if (!target) return fingers;
+          addPopup(target.x, target.y, '🧲 AUTO-FIX!', 'hsl(45 100% 55%)');
+          setScore(score => score + 2);
+          setTimeout(() => setFingers(items => items.filter(f => f.id !== target.id)), FIXED_DISPLAY_TIME);
+          return fingers.map(f => f.id === target.id ? { ...f, fixed: true } : f);
+        });
+      } else {
+        const dur = pu.type === 'shield' ? SHIELD_DURATION : pu.type === 'slowmo' ? SLOWMO_DURATION : pu.type === 'freeze' ? FREEZE_DURATION : COMBO_SHIELD_DURATION;
+        const label: Record<Exclude<PowerUpType, 'magnet'>, string> = {
+          shield: '🛡️ SHIELD!', slowmo: '🐌 SLOW-MO!', freeze: '❄️ FREEZE!', comboShield: '🔥 COMBO SHIELD!',
+        };
+        setPowerUps(pups => [...pups, { type: pu.type, active: true, duration: dur, startTime: now }]);
+        addPopup(pu.x, pu.y, label[pu.type], 'hsl(var(--primary))');
+        setTimeout(() => setPowerUps(pups => pups.filter(p => p.startTime !== now || p.type !== pu.type)), dur);
+      }
       return prev.filter(p => p.id !== id);
     });
   }, [sfx, addPopup]);
@@ -279,9 +436,33 @@ export function useGameLoop() {
 
       if (finger.isBroken) {
         sfx.playTap();
+        if (getAccessibility().haptics && navigator.vibrate) navigator.vibrate(12);
         const currentCombo = comboRef.current + 1;
         setCombo(currentCombo);
         setMaxCombo(m => Math.max(m, currentCombo));
+        adaptiveDifficultyRef.current = Math.min(1.35, adaptiveDifficultyRef.current + 0.015);
+        if (currentCombo === 1) unlockAchievement('first-fix');
+        if (currentCombo >= 10) unlockAchievement('combo-10');
+        setMissionProgress(progress => {
+          const next = progress + 1;
+          if (next < 10) return next;
+          const now = Date.now();
+          setPowerUps(pups => [...pups, { type: 'comboShield', active: true, duration: COMBO_SHIELD_DURATION, startTime: now }]);
+          addPopup(finger.x, finger.y, '🎯 MISSION COMPLETE!', 'hsl(45 100% 55%)');
+          setTimeout(() => setPowerUps(pups => pups.filter(p => p.startTime !== now)), COMBO_SHIELD_DURATION);
+          return 0;
+        });
+        if (finger.bossWave) {
+          setBossWave(wave => {
+            if (!wave || !wave.active || wave.wave !== finger.bossWave) return wave;
+            const fixed = wave.fixed + 1;
+            if (fixed < wave.target) return { ...wave, fixed };
+            setScore(total => total + 10);
+            unlockAchievement('boss-clear');
+            addPopup(50, 30, '🖐️ BOSS CLEARED +10!', 'hsl(45 100% 55%)');
+            return { ...wave, fixed, active: false, cleared: true };
+          });
+        }
         const multiplier = getComboMultiplier(currentCombo);
         const slowMoBoost = powerUps.some(p => p.type === 'slowmo' && p.active) ? 2 : 1;
 
@@ -317,6 +498,11 @@ export function useGameLoop() {
         setScore(s => {
           const newScore = s + points;
           setLevel(getLevel(newScore));
+          if (newScore >= 50) unlockAchievement('score-50');
+          if (Math.floor(newScore / BOSS_INTERVAL) > Math.floor(s / BOSS_INTERVAL)) {
+            const wave = Math.floor(newScore / BOSS_INTERVAL);
+            setBossWave(current => current?.active ? current : { wave, fixed: 0, target: 5, active: true, cleared: false });
+          }
           return newScore;
         });
 
@@ -333,9 +519,18 @@ export function useGameLoop() {
           return prev.filter(f => f.id !== id);
         }
 
+        const comboShieldActive = powerUps.some(p => p.type === 'comboShield' && p.active);
+        if (comboShieldActive) {
+          consumePowerUp('comboShield');
+          addPopup(finger.x, finger.y, '🔥 COMBO SAVED!', 'hsl(45 100% 55%)');
+          return prev.filter(f => f.id !== id);
+        }
+
         sfx.playLoseLife();
         setCombo(0);
         comboRef.current = 0;
+        setMissionProgress(0);
+        adaptiveDifficultyRef.current = Math.max(0.8, adaptiveDifficultyRef.current - 0.12);
         addPopup(finger.x, finger.y, '-1 ❤️', 'hsl(0 85% 55%)');
         triggerShake();
         setLives(l => {
@@ -348,7 +543,7 @@ export function useGameLoop() {
         return prev.filter(f => f.id !== id);
       }
     });
-  }, [endGame, getLevel, getComboMultiplier, addPopup, addParticle, triggerShake, sfx, powerUps, consumeShield]);
+  }, [endGame, getLevel, getComboMultiplier, addPopup, addParticle, triggerShake, sfx, powerUps, consumeShield, consumePowerUp]);
 
   // Update power-up expiration
   useEffect(() => {
@@ -374,7 +569,7 @@ export function useGameLoop() {
 
       const lvl = getLevel(scoreRef.current);
       const cfg = DIFFICULTY_CONFIG[difficultyRef.current];
-      const spawnInterval = Math.max(SPAWN_INTERVAL_BASE * cfg.spawnMult - lvl * 60, SPAWN_INTERVAL_MIN);
+      const spawnInterval = Math.max((SPAWN_INTERVAL_BASE * cfg.spawnMult - lvl * 60) / adaptiveDifficultyRef.current, SPAWN_INTERVAL_MIN);
 
       if (now - lastSpawnRef.current > spawnInterval) {
         lastSpawnRef.current = now;
@@ -384,10 +579,11 @@ export function useGameLoop() {
 
       // Possibly spawn power-up
       if (Math.random() < POWERUP_SPAWN_CHANCE * (delta / 16)) {
-        const puType = Math.random() < 0.5 ? 'shield' : 'slowmo';
+        const powerUpTypes: PowerUpType[] = ['shield', 'slowmo', 'magnet', 'freeze', 'comboShield'];
+        const puType = powerUpTypes[Math.floor(Math.random() * powerUpTypes.length)];
         setFloatingPowerUps(prev => [...prev, {
           id: `pu-${nextId++}`,
-          type: puType as 'shield' | 'slowmo',
+          type: puType,
           x: 10 + Math.random() * 80,
           y: -5,
           speed: 0.2 + Math.random() * 0.1,
@@ -395,7 +591,8 @@ export function useGameLoop() {
       }
 
       const slowMo = powerUps.some(p => p.type === 'slowmo' && p.active);
-      const speedFactor = slowMo ? 0.4 : 1;
+      const freeze = powerUps.some(p => p.type === 'freeze' && p.active);
+      const speedFactor = freeze ? 0 : (slowMo ? 0.4 : 1) * adaptiveDifficultyRef.current;
 
       setFingers(prev => {
         const updated: Finger[] = [];
@@ -411,6 +608,8 @@ export function useGameLoop() {
               if (shieldActive) {
                 consumeShield();
                 // Don't lose life
+              } else if (powerUps.some(p => p.type === 'comboShield' && p.active)) {
+                consumePowerUp('comboShield');
               } else {
                 lostLife = true;
               }
@@ -425,6 +624,8 @@ export function useGameLoop() {
           triggerShake();
           setCombo(0);
           comboRef.current = 0;
+          setMissionProgress(0);
+          adaptiveDifficultyRef.current = Math.max(0.8, adaptiveDifficultyRef.current - 0.12);
           setLives(l => {
             const newLives = l - 1;
             if (newLives <= 0) endGame(scoreRef.current);
@@ -447,10 +648,12 @@ export function useGameLoop() {
 
     animFrameRef.current = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(animFrameRef.current);
-  }, [gameState, spawnFinger, endGame, getLevel, sfx, triggerShake, powerUps, consumeShield]);
+  }, [gameState, spawnFinger, endGame, getLevel, sfx, triggerShake, powerUps, consumeShield, consumePowerUp]);
 
   return {
     gameState,
+    isPlayablesReady,
+    isSystemPaused,
     fingers,
     score,
     lives,
@@ -469,10 +672,13 @@ export function useGameLoop() {
     gameMode,
     powerUps,
     floatingPowerUps,
+    missionProgress,
+    bossWave,
     music,
     startGame,
     goToMenu,
     togglePause,
+    toggleMute,
     handleTap,
     removeParticle,
     submitInitials,

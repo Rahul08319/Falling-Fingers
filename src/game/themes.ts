@@ -1,3 +1,5 @@
+import { requestPlayablesSave } from './playables';
+
 export interface Theme {
   id: string;
   name: string;
@@ -115,6 +117,18 @@ export const THEMES: Theme[] = [
 const THEME_KEY = 'falling-fingers-theme';
 const BEST_KEY = 'falling-fingers-high';
 
+export function getSeasonalEvent() {
+  const month = new Date().getMonth();
+  if (month >= 8 && month <= 10) return { emoji: '🍂', name: 'Harvest Rush', accent: '32 100% 55%' };
+  if (month === 11 || month <= 1) return { emoji: '❄️', name: 'Frost Fix', accent: '195 100% 60%' };
+  if (month >= 2 && month <= 4) return { emoji: '🌸', name: 'Spring Spark', accent: '330 90% 65%' };
+  return { emoji: '☀️', name: 'Solar Sprint', accent: '48 100% 58%' };
+}
+
+export function applySeasonalAccent() {
+  document.documentElement.style.setProperty('--seasonal-accent', getSeasonalEvent().accent);
+}
+
 export function getActiveThemeId(): string {
   return localStorage.getItem(THEME_KEY) || 'neon';
 }
@@ -122,6 +136,7 @@ export function getActiveThemeId(): string {
 export function setActiveThemeId(id: string) {
   localStorage.setItem(THEME_KEY, id);
   applyTheme(id);
+  requestPlayablesSave();
 }
 
 export function isThemeUnlocked(theme: Theme): boolean {

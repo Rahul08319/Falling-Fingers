@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Finger, PowerUp } from './types';
 import FingerSprite from './FingerSprite';
 import GameHUD from './GameHUD';
@@ -6,6 +7,8 @@ import PauseOverlay from './PauseOverlay';
 import ParticleExplosion from './ParticleExplosion';
 import PowerUpItem from './PowerUpItem';
 import PowerUpIndicator from './PowerUpIndicator';
+import GameProgressPanel, { BossWaveState } from './GameProgressPanel';
+import { getAccessibility } from './progression';
 import { ParticleEvent, FloatingPowerUp } from './useGameLoop';
 
 interface GameScreenProps {
@@ -17,15 +20,17 @@ interface GameScreenProps {
   comboPopups: { id: number; x: number; y: number; text: string; color: string }[];
   particles: ParticleEvent[];
   isPaused: boolean;
+  isSystemPaused: boolean;
   screenShake: boolean;
   isMuted: boolean;
   powerUps: PowerUp[];
   floatingPowerUps: FloatingPowerUp[];
+  missionProgress: number;
+  bossWave: BossWaveState | null;
   gameMode: string;
   onTap: (id: string) => void;
   onPause: () => void;
   onResume: () => void;
-  onMenu: () => void;
   onRemoveParticle: (id: number) => void;
   onToggleMute: () => void;
   onCollectPowerUp: (id: string) => void;
@@ -33,15 +38,24 @@ interface GameScreenProps {
 
 const GameScreen = ({
   fingers, score, lives, level, combo, comboPopups, particles,
-  isPaused, screenShake, isMuted, powerUps, floatingPowerUps, gameMode,
-  onTap, onPause, onResume, onMenu, onRemoveParticle, onToggleMute, onCollectPowerUp,
+  isPaused, isSystemPaused, screenShake, isMuted, powerUps, floatingPowerUps, missionProgress, bossWave, gameMode,
+  onTap, onPause, onResume, onRemoveParticle, onToggleMute, onCollectPowerUp,
 }: GameScreenProps) => {
   const shieldActive = powerUps.some(p => p.type === 'shield' && p.active);
   const slowMoActive = powerUps.some(p => p.type === 'slowmo' && p.active);
+  const { largerTargets } = getAccessibility();
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') (isPaused ? onResume : onPause)();
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [isPaused, onPause, onResume]);
 
   return (
     <div
-      className="relative w-full h-screen overflow-hidden transition-transform"
+      className="playables-viewport relative transition-transform"
       style={{
         transform: screenShake
           ? `translate(${(Math.random() - 0.5) * 8}px, ${(Math.random() - 0.5) * 8}px)`
@@ -108,8 +122,10 @@ const GameScreen = ({
         onToggleMute={onToggleMute}
       />
 
+      <GameProgressPanel score={score} missionProgress={missionProgress} bossWave={bossWave} />
+
       {fingers.map(finger => (
-        <FingerSprite key={finger.id} finger={finger} onTap={onTap} />
+        <FingerSprite key={finger.id} finger={finger} onTap={onTap} largerTargets={largerTargets} />
       ))}
 
       {floatingPowerUps.map(pu => (
@@ -138,7 +154,7 @@ const GameScreen = ({
 
       <PowerUpIndicator powerUps={powerUps} />
 
-      {isPaused && <PauseOverlay onResume={onResume} onMenu={onMenu} />}
+      {isPaused && <PauseOverlay onResume={onResume} isSystemPaused={isSystemPaused} />}
     </div>
   );
 };

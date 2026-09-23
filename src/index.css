@@ -7,22 +7,22 @@
 @layer base {
   :root {
     --background: 220 20% 6%;
-    --foreground: 180 100% 90%;
+    --foreground: 0 0% 100%;
 
     --card: 220 25% 10%;
-    --card-foreground: 180 100% 90%;
+    --card-foreground: 0 0% 100%;
 
     --popover: 220 25% 10%;
-    --popover-foreground: 180 100% 90%;
+    --popover-foreground: 0 0% 100%;
 
-    --primary: 160 100% 45%;
-    --primary-foreground: 220 20% 6%;
+    --primary: 211 100% 40%; /* Apple Action Blue #0066cc */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 280 80% 55%;
+    --secondary: 211 100% 58%; /* Apple Action Blue Light #2997ff */
     --secondary-foreground: 0 0% 100%;
 
     --muted: 220 20% 15%;
-    --muted-foreground: 220 10% 55%;
+    --muted-foreground: 220 10% 65%;
 
     --accent: 340 90% 55%;
     --accent-foreground: 0 0% 100%;
@@ -32,20 +32,25 @@
 
     --border: 220 20% 18%;
     --input: 220 20% 18%;
-    --ring: 160 100% 45%;
+    --ring: 211 100% 50%;
 
-    --radius: 0.75rem;
+    --radius: 1.25rem;
 
     --finger-healthy: 30 60% 65%;
     --finger-broken: 0 85% 55%;
     --finger-fixed: 160 100% 50%;
-    --game-glow: 160 100% 45%;
+    --game-glow: 211 100% 50%;
     --game-danger: 0 85% 55%;
     --game-neon: 280 80% 55%;
     --seasonal-accent: 48 100% 58%;
 
-    --font-display: 'Orbitron', sans-serif;
-    --font-body: 'Rajdhani', sans-serif;
+    /* Apple System Font Stack */
+    --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+    /* Apple Fluid Physics */
+    --ease-apple-spring: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-apple-smooth: cubic-bezier(0.32, 0.72, 0, 1);
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -147,5 +152,62 @@
   }
   .animate-countdown {
     animation: countdown-pop 0.5s ease-out forwards;
+  }
+
+  /* Apple Design Materials & Elevation */
+  .apple-glass {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(28px) saturate(190%);
+    -webkit-backdrop-filter: blur(28px) saturate(190%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .apple-glass-card {
+    background: rgba(29, 29, 31, 0.78);
+    backdrop-filter: blur(36px) saturate(200%);
+    -webkit-backdrop-filter: blur(36px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .apple-pill-btn {
+    border-radius: 9999px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    transition: transform 140ms var(--ease-apple-spring), background-color 140ms ease, box-shadow 140ms ease;
+  }
+  .apple-pill-btn:active {
+    transform: scale(0.96);
+  }
+
+  .apple-btn-primary {
+    background: #0066cc;
+    color: #ffffff;
+    box-shadow: 0 4px 18px rgba(0, 102, 204, 0.38);
+  }
+  .apple-btn-primary:hover {
+    background: #0071e3;
+    box-shadow: 0 6px 24px rgba(0, 102, 204, 0.5);
+  }
+  .apple-btn-primary:active {
+    background: #0077ed;
+    transform: scale(0.96);
+  }
+
+  @keyframes apple-float {
+    0% { transform: translateY(0px) scale(1); }
+    50% { transform: translateY(-10px) scale(1.02); }
+    100% { transform: translateY(0px) scale(1); }
+  }
+  .animate-apple-float {
+    animation: apple-float 5s ease-in-out infinite;
+  }
+
+  @keyframes apple-pulse-subtle {
+    0%, 100% { opacity: 0.9; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.03); }
+  }
+  .animate-apple-breathe {
+    animation: apple-pulse-subtle 3.5s ease-in-out infinite;
   }
 }

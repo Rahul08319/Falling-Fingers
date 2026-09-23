@@ -2,31 +2,29 @@
 
 <br />
 
-<!-- Hero -->
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0066cc&height=200&section=header&text=Falling%20Fingers&fontSize=60&fontColor=ffffff&fontAlignY=38&desc=A%20fast-paced%20rhythm%20tap%20game%20for%2013%20platforms&descAlignY=60&descSize=18&animation=fadeIn" width="100%" alt="Falling Fingers" />
+<!-- Apple Design Hero Banner -->
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0066cc&height=220&section=header&text=Falling%20Fingers&fontSize=62&fontColor=ffffff&fontAlignY=38&desc=A%20precision%20rhythm%20tap%20game%20crafted%20with%20Apple%20design%20standards&descAlignY=62&descSize=17&animation=fadeIn" width="100%" alt="Falling Fingers Banner" />
 
 <br />
 
-[![YouTube Playables](https://img.shields.io/badge/YouTube_Playables-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://developers.google.com/youtube/gaming/playables)
-[![Facebook Instant](https://img.shields.io/badge/Facebook_Instant-1877F2?style=for-the-badge&logo=facebook&logoColor=white)](https://developers.facebook.com/docs/games/instant-games)
-[![Poki](https://img.shields.io/badge/Poki-6B4FBB?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgMThjLTQuNDEgMC04LTMuNTktOC04czMuNTktOCA4LTggOCAzLjU5IDggOC0zLjU5IDgtOCA4eiIvPjwvc3ZnPg==)](https://poki.com)
-[![CrazyGames](https://img.shields.io/badge/CrazyGames-FF4545?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6Ii8+PC9zdmc+)](https://www.crazygames.com)
-[![Yandex Games](https://img.shields.io/badge/Yandex_Games-FFCC00?style=for-the-badge&logo=yandex&logoColor=black)](https://yandex.com/games)
-[![Discord](https://img.shields.io/badge/Discord_Activities-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/developers/docs/activities/overview)
+[![YouTube Playables Certified](https://img.shields.io/badge/YouTube_Playables-Certified_v1-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://developers.google.com/youtube/gaming/playables)
+[![13 Native Platforms](https://img.shields.io/badge/Platforms-13_Native_SDKs-0066cc?style=for-the-badge&logo=apple&logoColor=white)](#-13-native-platform-versions)
+[![Zero Aggregators](https://img.shields.io/badge/Middleware-Zero_Playgama-30d158?style=for-the-badge&logo=checkmarx&logoColor=white)](#-zero-third-party-aggregators)
+[![Apple Design](https://img.shields.io/badge/Design-Apple_HIG_Fluid-1d1d1f?style=for-the-badge&logo=apple&logoColor=white)](#-apple-design-system)
 
 <br />
 
-[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
-[![React](https://img.shields.io/badge/React_18-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev)
-[![Vite](https://img.shields.io/badge/Vite_5-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+[![React](https://img.shields.io/badge/React-18.3-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev)
+[![Vite](https://img.shields.io/badge/Vite-5.4-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-f5f5f7?style=flat-square)](LICENSE)
-[![Build](https://img.shields.io/badge/Build-Passing-30d158?style=flat-square&logo=checkmarx&logoColor=white)](#)
+[![Build Status](https://img.shields.io/badge/Build-Passing-30d158?style=flat-square&logo=githubactions&logoColor=white)](#)
 
 <br />
 
-> **Tap the falling fingers. Survive the rhythm. Conquer every platform.**  
-> *A certified HTML5 game built for YouTube Playables — and deployed everywhere.*
+> **Tap the broken fingers. Feel the rhythm. Master precision.**  
+> *Designed from the ground up for YouTube Playables certification and distributed across 13 major web gaming platforms.*
 
 <br />
 
@@ -34,250 +32,133 @@
 
 ---
 
-## ✦ Gallery
+## ✦ Overview
 
-<div align="center">
+**Falling Fingers** is a fast, tactile web arcade game built with Apple Design precision and fluid motion physics. Players test their reflexes against falling finger sprites, triggering combos, collecting randomized power-ups, and deploying tactical revives.
 
-| Menu | Gameplay | Game Over |
-|:---:|:---:|:---:|
-| ![Menu](https://via.placeholder.com/280x500/0a0a0f/0066cc?text=Menu+Screen) | ![Gameplay](https://via.placeholder.com/280x500/0a0a0f/30d158?text=Game+Screen) | ![Game Over](https://via.placeholder.com/280x500/0a0a0f/ff453a?text=Game+Over) |
-
-</div>
+The codebase features a **pure native multi-platform architecture**: every single gaming platform communicates directly with its official JavaScript SDK. **No Playgama, no GameAnalytics bloat, and zero third-party middleware.**
 
 ---
 
-## ✦ Platform Support
+## ✦ 13 Native Platform Versions
 
-<div align="center">
+All 13 standalone, ready-to-upload distributions are packaged directly inside the [`platforms/`](./platforms) directory. Each folder contains its own self-contained production bundle, platform manifest, and native SDK injection:
 
-| Platform | SDK | Ads | Cloud Save | Leaderboard | Status |
+| Platform | Distribution Folder | Native SDK | Cloud Save | Ads | Status |
 |:---|:---|:---:|:---:|:---:|:---:|
-| 🎮 **YouTube Playables** | `ytgame` v1 | ✅ | ✅ | ✅ | ![Certified](https://img.shields.io/badge/-Certified-30d158?style=flat-square) |
-| 📘 **Facebook Instant** | `FBInstant` v7.1 | ✅ | ✅ | ✅ | ![Live](https://img.shields.io/badge/-Live-0066cc?style=flat-square) |
-| 🟣 **Poki** | `PokiSDK` v2 | ✅ | ❌ | ❌ | ![Live](https://img.shields.io/badge/-Live-0066cc?style=flat-square) |
-| 🔴 **CrazyGames** | `CrazyGames.SDK` v3 | ✅ | ❌ | ✅ | ![Live](https://img.shields.io/badge/-Live-0066cc?style=flat-square) |
-| 🟡 **Yandex Games** | `YaGames` | ✅ | ✅ | ✅ | ![Live](https://img.shields.io/badge/-Live-0066cc?style=flat-square) |
-| 🔵 **GameDistribution** | `gdsdk` | ✅ | ❌ | ❌ | ![Live](https://img.shields.io/badge/-Live-0066cc?style=flat-square) |
-| 💜 **Discord Activities** | `@discord/embedded-app-sdk` | ❌ | ✅ | ✅ | ![Live](https://img.shields.io/badge/-Live-0066cc?style=flat-square) |
-| 🟢 **JioGames** | JioGames HTML5 SDK | ✅ | ✅ | ✅ | ![Live](https://img.shields.io/badge/-Live-0066cc?style=flat-square) |
-| ⚪ **Y8** | `ID.net` SDK | ✅ | ✅ | ✅ | ![Live](https://img.shields.io/badge/-Live-0066cc?style=flat-square) |
-| 🔶 **Lagged** | Lagged API | ✅ | ❌ | ✅ | ![Live](https://img.shields.io/badge/-Live-0066cc?style=flat-square) |
-| 🪟 **Microsoft Store** | PWA + Service Worker | ❌ | ✅ | ❌ | ![Live](https://img.shields.io/badge/-Live-0066cc?style=flat-square) |
-| 🤖 **Huawei & Xiaomi** | `qg` / `hbs` Quick App | ✅ | ✅ | ✅ | ![Live](https://img.shields.io/badge/-Live-0066cc?style=flat-square) |
-| 📰 **MSN & Reddit** | `postMessage` embed | ❌ | ❌ | ❌ | ![Live](https://img.shields.io/badge/-Live-0066cc?style=flat-square) |
-
-</div>
-
-> **Zero third-party aggregators.** Every adapter talks directly to its platform's native SDK.
+| 🎮 **YouTube Playables** | [`platforms/youtube-playables/`](./platforms/youtube-playables) | `ytgame` v1 | ✅ | ✅ | ![Certified](https://img.shields.io/badge/-Certified-30d158?style=flat-square) |
+| 📘 **Facebook Instant Games** | [`platforms/facebook-instant/`](./platforms/facebook-instant) | `FBInstant` v7.1 | ✅ | ✅ | ![Live](https://img.shields.io/badge/-Ready-0066cc?style=flat-square) |
+| 🟣 **Poki** | [`platforms/poki/`](./platforms/poki) | `PokiSDK` v2 | ❌ | ✅ | ![Live](https://img.shields.io/badge/-Ready-0066cc?style=flat-square) |
+| 🔴 **CrazyGames** | [`platforms/crazygames/`](./platforms/crazygames) | `CrazyGames.SDK` v3 | ❌ | ✅ | ![Live](https://img.shields.io/badge/-Ready-0066cc?style=flat-square) |
+| 🟡 **Yandex Games** | [`platforms/yandex/`](./platforms/yandex) | `YaGames` v2 | ✅ | ✅ | ![Live](https://img.shields.io/badge/-Ready-0066cc?style=flat-square) |
+| 🔵 **GameDistribution** | [`platforms/gamedistribution/`](./platforms/gamedistribution) | `gdsdk` HTML5 | ❌ | ✅ | ![Live](https://img.shields.io/badge/-Ready-0066cc?style=flat-square) |
+| 💜 **Discord Activities** | [`platforms/discord/`](./platforms/discord) | Embedded App SDK | ✅ | ❌ | ![Live](https://img.shields.io/badge/-Ready-0066cc?style=flat-square) |
+| 🟢 **JioGames** | [`platforms/jiogames/`](./platforms/jiogames) | JioGames HTML5 | ✅ | ✅ | ![Live](https://img.shields.io/badge/-Ready-0066cc?style=flat-square) |
+| ⚪ **Y8 / ID.net** | [`platforms/y8/`](./platforms/y8) | `ID.net` SDK | ✅ | ✅ | ![Live](https://img.shields.io/badge/-Ready-0066cc?style=flat-square) |
+| 🔶 **Lagged** | [`platforms/lagged/`](./platforms/lagged) | Lagged API v1 | ❌ | ✅ | ![Live](https://img.shields.io/badge/-Ready-0066cc?style=flat-square) |
+| 🪟 **Microsoft Store** | [`platforms/microsoft-store/`](./platforms/microsoft-store) | PWA + ServiceWorker | ✅ | ❌ | ![Live](https://img.shields.io/badge/-Ready-0066cc?style=flat-square) |
+| 🤖 **Huawei & Xiaomi** | [`platforms/quickgame-huawei-xiaomi/`](./platforms/quickgame-huawei-xiaomi) | `qg` / `hbs` Quick App | ✅ | ✅ | ![Live](https://img.shields.io/badge/-Ready-0066cc?style=flat-square) |
+| 📰 **MSN & Reddit** | [`platforms/msn-reddit/`](./platforms/msn-reddit) | `postMessage` Embed | ❌ | ❌ | ![Live](https://img.shields.io/badge/-Ready-0066cc?style=flat-square) |
 
 ---
 
-## ✦ YouTube Playables Certification
+## ✦ Apple Design System
 
-<details>
-<summary><b>View certification checklist</b></summary>
+The user interface follows Apple's Human Interface Guidelines (HIG) and fluid motion principles:
 
-<br />
-
-The game has been built to satisfy **all** YouTube Playables publishing requirements:
-
-| Requirement | Implementation | File |
-|:---|:---|:---|
-| SDK loaded **before** any game code | `<script src="https://www.youtube.com/game_api/v1">` in `<head>` | `index.html` |
-| `firstFrameReady()` on first paint | Called when canvas renders | `YouTubePlayables.ts` |
-| `gameReady()` when interactive | Called after menu is fully loaded | `YouTubePlayables.ts` |
-| Audio mute on `isAudioEnabled()` = false | Checked on init, updated via callback | `YouTubePlayables.ts` |
-| `onAudioEnabledChange` subscription | Re-routes `music.setMuted()` | `useGameLoop.ts` |
-| `onPause` with save-before-pause | Calls `saveData` inside pause handler | `YouTubePlayables.ts` |
-| `onResume` to restart game state | Re-activates animation frame | `YouTubePlayables.ts` |
-| `saveData` — UTF-16 well-formed | Custom validator rejects surrogates | `playables.ts` |
-| `saveData` — ≤ 3 MiB | Byte-length guard, throws if exceeded | `playables.ts` |
-| `sendScore` — integers only | `Number.isSafeInteger` check | `YouTubePlayables.ts` |
-| Relative base URL for assets | `base: './'` in `vite.config.ts` | `vite.config.ts` |
-| Interstitial ad on game over | `requestInterstitialAd()` in `endGame` | `useGameLoop.ts` |
-| Rewarded ad for player revive | `requestRewardedAd()` + 5s countdown | `RewardedReviveModal.tsx` |
-
-</details>
+- **Typography**: Apple SF Pro system font stack with negative optical tracking (`tracking-[-0.035em]`), crisp hierarchy, and high contrast legibility.
+- **Materials**: Multi-layer frosted glass surfaces (`backdrop-filter: blur(36px) saturate(200%)`, `border: 1px solid rgba(255,255,255,0.14)`).
+- **Interactive Pill Controls**: All buttons and segmented selectors use Apple's signature pill form factor (`rounded-full`) with instant press feedback (`active:scale-[0.96]`) and Action Blue `#0066cc` highlight.
+- **Fluid Animation**: Spring physics easing (`cubic-bezier(0.16, 1, 0.3, 1)`), interruptible state transitions, ambient lighting orbs, and breathing glow indicators.
 
 ---
 
-## ✦ Architecture
+## ✦ YouTube Playables Certification Checklist
+
+Every requirement specified by the [YouTube Playables Documentation](https://developers.google.com/youtube/gaming/playables) is certified and pre-validated:
 
 ```
-falling-fingers/
-├── index.html                        # SDK loader (YouTube Playables in <head>)
-├── vite.config.ts                    # base: './', @vitejs/plugin-react
+[✓] SDK Placement: Loaded in <head> BEFORE any game script
+[✓] First Frame: window.ytgame.game.firstFrameReady() called on initial canvas render
+[✓] Game Ready: window.ytgame.game.gameReady() invoked when menu is interactive
+[✓] Audio Sync: isAudioEnabled() checked on boot + onAudioEnabledChange subscription
+[✓] Pause/Resume: onPause saves player progress; onResume restores animation loop
+[✓] UTF-16 Data Safety: saveData validates UTF-16 well-formedness and enforces <= 3 MiB
+[✓] Integer Scores: sendScore validates Number.isSafeInteger before submission
+[✓] Interstitial Ads: Triggered gracefully on Game Over and menu navigation
+[✓] Rewarded Revive: 5-second countdown modal with ad-completion reward callback
+[✓] Sandboxed Assets: Built with relative base path (base: './')
+```
+
+---
+
+## ✦ Zero Third-Party Aggregators
+
+Unlike games reliant on aggregator SDKs like Playgama or GameMonetize, Falling Fingers implements an isolated platform bridge pattern:
+
+```
+                             ┌─────────────────────────┐
+                             │    Game Loop / UI       │
+                             └────────────┬────────────┘
+                                          │
+                             ┌────────────▼────────────┐
+                             │     PlatformManager     │
+                             └────────────┬────────────┘
+         ┌────────────────────────────────┼────────────────────────────────┐
+         │                                │                                │
+┌────────▼────────┐              ┌────────▼────────┐              ┌────────▼────────┐
+│ YouTubePlayables│              │ FacebookInstant │              │  Poki / Crazy   │
+│  (ytgame SDK)   │              │  (FBInstant SDK)│              │  (Native SDKs)  │
+└─────────────────┘              └─────────────────┘              └─────────────────┘
+```
+
+- **Direct Communication**: Each adapter speaks directly to the platform's native window API.
+- **Auto-Detection**: `PlatformManager` automatically detects the execution environment at runtime.
+- **URL Override**: Force any platform mode for local testing via query parameter (e.g. `?platform=facebook`).
+
+---
+
+## ✦ Project Structure
+
+```
+Falling-Fingers/
+├── index.html                        # YouTube Playables certified SDK loader
+├── vite.config.ts                    # Relative asset paths (base: './')
 ├── scripts/
-│   └── build-platforms.js            # Generates dist/platforms/{platform}/
+│   └── build-platforms.js            # Standalone multi-platform packager
+│
+├── platforms/                        # 13 Standalone, ready-to-publish packages
+│   ├── youtube-playables/            # YouTube Playables (Certified v1)
+│   ├── facebook-instant/             # Facebook Instant Games (fbapp-config.json)
+│   ├── poki/                         # Poki SDK v2
+│   ├── crazygames/                   # CrazyGames SDK v3
+│   ├── yandex/                       # Yandex Games
+│   ├── gamedistribution/             # GameDistribution
+│   ├── discord/                      # Discord Activities
+│   ├── jiogames/                     # JioGames HTML5
+│   ├── y8/                           # Y8 / ID.net
+│   ├── lagged/                       # Lagged API
+│   ├── microsoft-store/              # Microsoft Store PWA (manifest + sw.js)
+│   ├── quickgame-huawei-xiaomi/      # Huawei & Xiaomi Quick Apps
+│   └── msn-reddit/                   # MSN & Reddit Embed
 │
 ├── src/
-│   ├── platforms/                    # Multi-platform bridge layer
+│   ├── platforms/                    # Multi-Platform Adapter Layer
 │   │   ├── types.ts                  # GamePlatformBridge interface
-│   │   ├── index.ts                  # Re-exports
-│   │   ├── PlatformManager.ts        # Auto-detection singleton
-│   │   └── adapters/
-│   │       ├── YouTubePlayables.ts   # ytgame SDK v1 (full)
-│   │       ├── FacebookInstant.ts    # FBInstant v7.1
-│   │       ├── PokiAdapter.ts        # PokiSDK
-│   │       ├── CrazyGamesAdapter.ts  # CrazyGames SDK v3
-│   │       ├── YandexAdapter.ts      # YaGames
-│   │       ├── GameDistAdapter.ts    # gdsdk
-│   │       ├── DiscordAdapter.ts     # Discord Embedded App SDK
-│   │       ├── JioGamesAdapter.ts    # JioGames HTML5
-│   │       ├── Y8Adapter.ts          # Y8 / ID.net
-│   │       ├── LaggedAdapter.ts      # Lagged API
-│   │       ├── MicrosoftStoreAdapter.ts  # PWA + SW
-│   │       ├── QuickGameAdapter.ts   # Huawei/Xiaomi qg/hbs
-│   │       ├── MSNRedditAdapter.ts   # postMessage embed
-│   │       └── StandaloneAdapter.ts  # Local dev mock
+│   │   ├── PlatformManager.ts        # Singleton runtime environment detector
+│   │   └── adapters/                 # 13 native TypeScript platform adapters
 │   │
-│   ├── game/
-│   │   ├── playables.ts              # High-level SDK exports
-│   │   ├── useGameLoop.ts            # Main game loop + platform wiring
-│   │   ├── MenuScreen.tsx            # Apple Design menu
-│   │   ├── GameScreen.tsx            # Finger sprites + particles
-│   │   ├── GameHUD.tsx               # Frosted glass HUD pill
-│   │   ├── GameOverScreen.tsx        # Stats card + share
-│   │   ├── PlatformInspectorModal.tsx # Live platform switcher
-│   │   └── RewardedReviveModal.tsx   # 5s countdown revive
+│   ├── game/                         # Core Gameplay & Apple Design UI
+│   │   ├── useGameLoop.ts            # Main loop, physics, sound, save state
+│   │   ├── MenuScreen.tsx            # Apple glass showcase card & segmented controls
+│   │   ├── GameScreen.tsx            # Finger sprites, particles, power-ups
+│   │   ├── GameHUD.tsx               # Floating frosted pill HUD
+│   │   ├── GameOverScreen.tsx        # High-contrast Apple stats card
+│   │   └── RewardedReviveModal.tsx   # 5-second countdown revive ring
 │   │
 │   └── pages/
-│       └── Index.tsx                 # Root — wires all modals
+│       └── Index.tsx                 # Viewport manager & modal conductor
 ```
-
----
-
-## ✦ Platform Detection
-
-The `PlatformManager` singleton auto-detects the runtime environment in this priority order:
-
-```typescript
-// Override via URL: ?platform=facebook
-// 1. window.ytgame           → youtube
-// 2. window.FBInstant        → facebook
-// 3. window.PokiSDK          → poki
-// 4. window.CrazyGames.SDK   → crazygames
-// 5. window.YaGames          → yandex
-// 6. window.gdsdk            → gamedistribution
-// 7. window.DiscordSDK       → discord
-// 8. window.JioGames         → jiogames
-// 9. window.ID               → y8
-// 10. window.LaggedAPI       → lagged
-// 11. window.qg / window.hbs → quickgame
-// 12. window.Windows         → msstore
-// 13. window.parent !== window → msn_reddit
-// Default                    → youtube (certified fallback)
-```
-
----
-
-## ✦ SDK Integration Reference
-
-<details>
-<summary><b>YouTube Playables</b></summary>
-
-```html
-<!-- index.html — MUST be first script in <head> -->
-<script src="https://www.youtube.com/game_api/v1"></script>
-```
-
-```typescript
-import { saveGameData, loadGameData, sendScore } from '@/game/playables';
-import { PlatformManager } from '@/platforms';
-
-const bridge = PlatformManager.getBridge();
-
-// Signal game is fully interactive
-await bridge.gameReady?.();
-
-// Save (UTF-16 validated, ≤ 3 MiB)
-await saveGameData({ highScore: 9000 });
-
-// Submit score (integer only)
-await sendScore(9000);
-
-// Rewarded ad with callback
-await bridge.requestRewardedAd?.('revive', () => {
-  // grant reward — called only on successful completion
-  grantRevive();
-});
-```
-
-</details>
-
-<details>
-<summary><b>Facebook Instant Games</b></summary>
-
-```html
-<script src="https://connect.facebook.net/en_US/fbinstant.8.0.js"></script>
-```
-
-```typescript
-const bridge = PlatformManager.getBridge(); // → FacebookInstant adapter
-
-await bridge.saveData?.({ highScore: 9000 });
-await bridge.submitScore?.(9000);
-bridge.showInterstitialAd?.();
-```
-
-</details>
-
-<details>
-<summary><b>Poki</b></summary>
-
-```html
-<script src="https://game-cdn.poki.com/scripts/v2/poki-sdk.js"></script>
-```
-
-```typescript
-bridge.showInterstitialAd?.();           // commercialBreak
-bridge.showRewardedAd?.('coin', cb);     // rewardedBreak
-```
-
-</details>
-
-<details>
-<summary><b>CrazyGames</b></summary>
-
-```html
-<script src="https://sdk.crazygames.com/crazygames-sdk-v3.js"></script>
-```
-
-```typescript
-bridge.showInterstitialAd?.();
-bridge.showRewardedAd?.('chest', cb);
-bridge.submitScore?.(score);            // leaderboard
-```
-
-</details>
-
-<details>
-<summary><b>Yandex Games</b></summary>
-
-```typescript
-// Injected by Yandex iframe — no manual script tag required
-bridge.saveData?.({ score });
-bridge.loadData?.();
-bridge.showInterstitialAd?.();
-bridge.showRewardedAd?.('star', cb);
-```
-
-</details>
-
-<details>
-<summary><b>Discord Activities</b></summary>
-
-```bash
-npm install @discord/embedded-app-sdk
-```
-
-```typescript
-// DiscordAdapter wraps DiscordSDK with auth + OAuth2 flow
-bridge.saveData?.({ score });    // localStorage fallback
-bridge.submitScore?.(score);     // in-activity leaderboard
-```
-
-</details>
 
 ---
 
@@ -285,139 +166,61 @@ bridge.submitScore?.(score);     // in-activity leaderboard
 
 ### Prerequisites
 
-```bash
-node -v   # >= 18
-npm -v    # >= 9
-```
+- **Node.js**: $\ge 18.0.0$
+- **npm**: $\ge 9.0.0$
 
-### Install & run locally
+### Local Development
 
 ```bash
+# 1. Clone repository
 git clone https://github.com/Rahul08319/Falling-Fingers.git
 cd Falling-Fingers
+
+# 2. Install dependencies
 npm install
+
+# 3. Start local development server
 npm run dev
 ```
 
-The dev server starts at `http://localhost:8080`. The YouTube Playables SDK runs as a **no-op** in local mode — no changes required.
+Visit `http://localhost:8080`. In local mode, the YouTube Playables SDK automatically operates in mock mode with zero errors.
 
-### Build
+### Production Build
 
 ```bash
-# Standard production build
+# Standard Vite production build
 npm run build
 
-# Build + package all 13 platform distributions
+# Build AND generate all 13 standalone platform versions
 npm run build:platforms
 ```
 
-Platform archives land in `dist/platforms/{platform}/` — each with its platform-specific `index.html`, injected SDK, `manifest.json`, and CSP headers file.
-
-### Test suite (YouTube Playables)
-
-Follow the [YouTube Playables Test Suite Guide](https://developers.google.com/youtube/gaming/playables/reference/test_suite_guide) before submitting. Every certification checkpoint is pre-wired.
-
-### Preview production build
-
-```bash
-npm run preview     # http://localhost:4173
-```
-
-Force a specific platform via URL param:
-
-```
-http://localhost:4173?platform=facebook
-http://localhost:4173?platform=yandex
-http://localhost:4173?platform=discord
-```
+Output distributions are generated into both [`platforms/`](./platforms) (tracked in Git) and `dist/platforms/`.
 
 ---
 
-## ✦ Game Mechanics
+## ✦ Submitting to Platforms
 
-| Mechanic | Description |
-|:---|:---|
-| **Falling Fingers** | Tap the screen when falling finger sprites reach the hit zone |
-| **Combo Multiplier** | Consecutive hits build a score multiplier up to ×8 |
-| **Power-ups** | Shield (block one miss), Slow-Mo, Score Boost — drop randomly |
-| **Rewarded Revive** | On death, watch an ad to continue with 1 life + shield |
-| **Dynamic Difficulty** | Speed increases with score; new finger patterns unlock at milestones |
-| **Cloud Saves** | High score persisted across sessions on supported platforms |
-
----
-
-## ✦ Development
-
-### Environment
-
-| Tool | Version |
-|:---|:---|
-| Node.js | ≥ 18 (tested on v26) |
-| Vite | 5.x |
-| React | 18.x |
-| TypeScript | 5.x |
-| Tailwind CSS | 3.x |
-
-### Adding a new platform
-
-1. Create `src/platforms/adapters/MyPlatformAdapter.ts` implementing `GamePlatformBridge`
-2. Register it in `PlatformManager.ts` → `PLATFORM_REGISTRY` array
-3. Add detection logic to `detectPlatform()` in the same file
-4. Add the platform entry to `scripts/build-platforms.js`
-
-```typescript
-// Minimal adapter skeleton
-import type { GamePlatformBridge } from '../types';
-
-export class MyPlatformAdapter implements GamePlatformBridge {
-  readonly platformId = 'myplatform';
-  readonly platformName = 'My Platform';
-
-  async init() { /* load SDK */ }
-  async gameReady() { /* signal ready */ }
-  async saveData(data: Record<string, unknown>) { /* persist */ }
-  async loadData() { /* restore */ return {}; }
-  async submitScore(score: number) { /* leaderboard */ }
-  showInterstitialAd() { /* mid-session ad */ }
-  showRewardedAd(type: string, onRewarded: () => void) { /* rewarded */ }
-}
-```
-
----
-
-## ✦ Contributing
-
-Pull requests are welcome. Please open an issue first for major changes.
-
-```bash
-# Lint
-npm run lint
-
-# Unit tests
-npm run test
-
-# Test in watch mode
-npm run test:watch
-```
+To submit to any platform:
+1. Navigate to the platform's folder in [`platforms/`](./platforms).
+2. Zip all files within that directory (with `index.html` at the zip root).
+3. Upload the zip file directly to that platform's developer portal.
 
 ---
 
 ## ✦ License
 
-Distributed under the **MIT License**. See [`LICENSE`](LICENSE) for details.
+This project is licensed under the **MIT License**. See [`LICENSE`](LICENSE) for details.
 
----
+<br />
 
 <div align="center">
 
-<br />
-
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0066cc&height=120&section=footer&animation=fadeIn" width="100%" alt="footer" />
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0066cc&height=120&section=footer&animation=fadeIn" width="100%" alt="Footer Wave" />
 
 <br />
 
-**Falling Fingers** · Built with ❤️ by [Rahul08319](https://github.com/Rahul08319)
-
-*Certified for YouTube Playables · Native SDK on every platform · Zero aggregators*
+**Falling Fingers** · Crafted with ❤️ by [Rahul08319](https://github.com/Rahul08319)  
+*Certified for YouTube Playables · 13 Native Platforms · Zero Aggregators*
 
 </div>

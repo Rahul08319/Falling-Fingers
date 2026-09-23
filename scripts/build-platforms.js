@@ -11,7 +11,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT_DIR = path.resolve(__dirname, '..');
 const DIST_DIR = path.resolve(ROOT_DIR, 'dist');
-const PLATFORMS_OUT_DIR = path.resolve(DIST_DIR, 'platforms');
+const ROOT_PLATFORMS_DIR = path.resolve(ROOT_DIR, 'platforms');
+const DIST_PLATFORMS_DIR = path.resolve(DIST_DIR, 'platforms');
 
 function copyDirRecursive(src, dest) {
   if (!fs.existsSync(dest)) {
@@ -38,10 +39,13 @@ function buildPlatforms() {
 
   console.log('🚀 Packaging standalone distributions for 13 platforms...\n');
 
-  if (fs.existsSync(PLATFORMS_OUT_DIR)) {
-    fs.rmSync(PLATFORMS_OUT_DIR, { recursive: true, force: true });
+  // Clean and recreate root platforms directory (tracked in git)
+  if (fs.existsSync(ROOT_PLATFORMS_DIR)) {
+    fs.rmSync(ROOT_PLATFORMS_DIR, { recursive: true, force: true });
   }
-  fs.mkdirSync(PLATFORMS_OUT_DIR, { recursive: true });
+  fs.mkdirSync(ROOT_PLATFORMS_DIR, { recursive: true });
+
+  const PLATFORMS_OUT_DIR = ROOT_PLATFORMS_DIR;
 
   const baseHtml = fs.readFileSync(path.join(DIST_DIR, 'index.html'), 'utf8');
 
@@ -241,7 +245,42 @@ self.addEventListener('fetch', (e) => { e.respondWith(caches.match(e.request).th
   fs.writeFileSync(path.join(msnDir, 'index.html'), msnHtml, 'utf8');
   console.log('  ✅ 13. MSN & Reddit Games (dist/platforms/msn-reddit/)');
 
-  console.log('\n✨ All 13 standalone platform versions generated successfully in dist/platforms/!\n');
+  // Generate Platform Catalog index in platforms/README.md
+  const catalogMd = `# 🎮 Standalone Multi-Platform Builds (Zero Aggregator)
+
+Each folder in this directory contains a complete, self-contained standalone build of **Falling Fingers** tailored specifically for that platform's native SDK and publishing guidelines.
+
+## 📦 Directory Structure
+
+| Platform | Folder | Target SDK | Native Features |
+|:---|:---|:---|:---|
+| 🎮 **YouTube Playables** | [\`youtube-playables/\`](./youtube-playables) | \`ytgame\` v1 | Head SDK, firstFrameReady, gameReady, audio callbacks, UTF-16 saves, interstitial & rewarded ads |
+| 📘 **Facebook Instant Games** | [\`facebook-instant/\`](./facebook-instant) | \`FBInstant\` v7.1 | fbapp-config.json, player cloud storage, interstitial ads, rewarded ads |
+| 🟣 **Poki** | [\`poki/\`](./poki) | \`PokiSDK\` v2 | commercialBreak, rewardedBreak, responsive canvas |
+| 🔴 **CrazyGames** | [\`crazygames/\`](./crazygames) | \`CrazyGames.SDK\` v3 | adBreak, rewardedAd, system error tracking |
+| 🟡 **Yandex Games** | [\`yandex/\`](./yandex) | \`YaGames\` v2 | Cloud save storage, fullscreen adv, rewarded adv |
+| 🔵 **GameDistribution** | [\`gamedistribution/\`](./gamedistribution) | \`gdsdk\` HTML5 | Auto-interstitial breaks, GD_OPTIONS init |
+| 💜 **Discord Activities** | [\`discord/\`](./discord) | Embedded App SDK | discord-activity.json manifest, embedded client layout |
+| 🟢 **JioGames** | [\`jiogames/\`](./jiogames) | JioGames HTML5 | Responsive touch layout, game-center compatible |
+| ⚪ **Y8 / ID.net** | [\`y8/\`](./y8) | \`ID.net\` SDK | ID.net auto-init, achievements, score API |
+| 🔶 **Lagged** | [\`lagged/\`](./lagged) | Lagged API v1 | Leaderboard and rewarded ads |
+| 🪟 **Microsoft Store** | [\`microsoft-store/\`](./microsoft-store) | PWA + Service Worker | manifest.webmanifest, standalone window display, offline caching |
+| 🤖 **Huawei & Xiaomi** | [\`quickgame-huawei-xiaomi/\`](./quickgame-huawei-xiaomi) | \`qg\` / \`hbs\` | manifest.json Quick App configuration, portrait lock |
+| 📰 **MSN & Reddit** | [\`msn-reddit/\`](./msn-reddit) | \`postMessage\` Embed | Safe cross-domain iframe handshake, responsive embedding |
+
+## 🚀 How to Submit
+
+To submit any version to its respective store or developer portal:
+1. Open the folder for your target platform (e.g. \`platforms/youtube-playables/\`).
+2. Zip all files within that folder (ensure \`index.html\` is at the zip root).
+3. Upload the zip directly to the platform's developer dashboard.
+`;
+  fs.writeFileSync(path.join(ROOT_PLATFORMS_DIR, 'README.md'), catalogMd, 'utf8');
+
+  // Mirror to dist/platforms for CI/CD pipelines
+  copyDirRecursive(ROOT_PLATFORMS_DIR, DIST_PLATFORMS_DIR);
+
+  console.log('\n✨ All 13 standalone platform versions generated successfully in platforms/ and dist/platforms/!\n');
 }
 
 buildPlatforms();

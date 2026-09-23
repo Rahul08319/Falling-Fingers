@@ -1,0 +1,10 @@
+{
+  "name": "Falling Fingers",
+  "type": "activity",
+  "handler_mode": "embedded",
+  "supported_platforms": [
+    "web",
+    "desktop",
+    "mobile"
+  ]
+}

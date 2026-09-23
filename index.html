@@ -2,26 +2,26 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>Falling Fingers - Tap to Fix!</title>
-    <meta name="description" content="Fingers fall from the sky! Tap the broken ones to fix them before they escape." />
-    <meta name="author" content="Lovable" />
+    <meta name="description" content="A fast, tactile arcade game where fingers fall from the sky. Tap the broken ones before they escape!" />
+    <meta name="author" content="Rahul Kumar" />
+    <meta name="theme-color" content="#1d1d1f" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-    <!-- TODO: Update og:title to match your application name -->
-    <meta property="og:title" content="Lovable App" />
-    <meta property="og:description" content="Lovable Generated Project" />
+    <!-- Open Graph & Social -->
+    <meta property="og:title" content="Falling Fingers - Tap to Fix!" />
+    <meta property="og:description" content="Catch the falling fingers. Protect your streak. Beat the next boss wave." />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
-
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@Lovable" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+
+    <!-- YouTube Playables SDK v1: MUST load before any game code for reproducible, sandboxed environment -->
+    <script src="https://www.youtube.com/game_api/v1"></script>
   </head>
 
   <body>
     <div id="root"></div>
-    <!-- Must load before the app bundle for YouTube Playables certification. -->
-    <script src="https://www.youtube.com/game_api/v1"></script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -34,9 +34,9 @@
 
 ## ✦ Overview
 
-**Falling Fingers** is a fast, tactile web arcade game built with Apple Design precision and fluid motion physics. Players test their reflexes against falling finger sprites, triggering combos, collecting randomized power-ups, and deploying tactical revives.
+**Falling Fingers** is a fast-paced, tactile arcade rhythm game designed with Apple Arcade standards and fluid physics motion. Players test their reflexes against falling finger sprites, triggering combos, collecting randomized power-ups, and deploying tactical revives.
 
-The codebase features a **pure native multi-platform architecture**: every single gaming platform communicates directly with its official JavaScript SDK. **No Playgama, no GameAnalytics bloat, and zero third-party middleware.**
+The game features a **pure native multi-platform architecture**: every single gaming platform communicates directly with its official JavaScript SDK. **No Playgama, no GameAnalytics bloat, and zero third-party middleware.**
 
 ---
 

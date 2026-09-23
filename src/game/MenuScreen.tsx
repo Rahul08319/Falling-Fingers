@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Difficulty, GameMode, DIFFICULTY_CONFIG } from './types';
 import { getDailyDateString } from './dailySeed';
 import { getSeasonalEvent } from './themes';
@@ -27,65 +27,109 @@ const MenuScreen = ({
   const difficulties: Difficulty[] = ['easy', 'normal', 'hard'];
   const seasonal = getSeasonalEvent();
 
+  // Floating background fingers for live arcade game atmosphere
+  const backgroundFingers = useMemo(() => [
+    { id: 1, icon: '👆', left: 12, delay: 0, duration: 6, broken: false },
+    { id: 2, icon: '🩹', left: 28, delay: 2, duration: 7, broken: true },
+    { id: 3, icon: '🖐️', left: 52, delay: 1, duration: 8, broken: false },
+    { id: 4, icon: '✌️', left: 74, delay: 3, duration: 6.5, broken: true },
+    { id: 5, icon: '🤞', left: 88, delay: 1.5, duration: 7.5, broken: false },
+    { id: 6, icon: '🩹', left: 40, delay: 4, duration: 9, broken: true },
+  ], []);
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen px-4 relative select-none overflow-hidden bg-gradient-to-b from-[#0d0d11] via-[#121218] to-[#09090c]">
-      {/* Apple Ambient Atmospheric Lighting */}
+    <div className="relative w-full h-full min-h-screen flex flex-col justify-between p-4 sm:p-6 select-none overflow-hidden bg-[#090a0f]">
+      {/* Background Animated Game Arena Particles & Drifting Fingers */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Ambient Game Glows */}
         <div
-          className="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full opacity-20 filter blur-[90px] animate-apple-breathe"
+          className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full opacity-25 filter blur-[120px]"
           style={{ background: 'radial-gradient(circle, #0066cc 0%, rgba(41,151,255,0) 70%)' }}
         />
         <div
-          className="absolute -bottom-24 left-1/4 w-80 h-80 rounded-full opacity-15 filter blur-[80px] animate-apple-float"
-          style={{ background: 'radial-gradient(circle, #5e5ce6 0%, rgba(94,92,230,0) 70%)' }}
+          className="absolute bottom-10 left-1/3 w-[400px] h-[400px] rounded-full opacity-20 filter blur-[100px]"
+          style={{ background: 'radial-gradient(circle, #ff2d55 0%, rgba(255,45,85,0) 70%)' }}
         />
-        {Array.from({ length: 6 }).map((_, i) => (
+
+        {/* Live Drifting Arcade Sprites Preview */}
+        {backgroundFingers.map((f) => (
           <div
-            key={i}
-            className="absolute rounded-full opacity-10 filter blur-md"
+            key={f.id}
+            className="absolute text-4xl sm:text-5xl opacity-20"
             style={{
-              width: `${40 + i * 20}px`,
-              height: `${40 + i * 20}px`,
-              left: `${15 + i * 14}%`,
-              top: `${20 + (i % 3) * 25}%`,
-              background: i % 2 === 0 ? '#0066cc' : '#30d158',
-              animation: `apple-float ${6 + i * 1.5}s ease-in-out infinite alternate`,
-              animationDelay: `${i * 0.7}s`,
+              left: `${f.left}%`,
+              animation: `arcade-fall ${f.duration}s linear infinite`,
+              animationDelay: `${f.delay}s`,
+              filter: f.broken ? 'drop-shadow(0 0 12px rgba(255, 69, 58, 0.7))' : 'none',
             }}
-          />
+          >
+            {f.icon}
+          </div>
         ))}
+
+        {/* Arcade Grid Texture */}
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: `linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px)`,
+            backgroundSize: '48px 48px',
+          }}
+        />
       </div>
 
-      {/* Main Glass Showcase Card */}
-      <div className="apple-glass-card rounded-[32px] px-6 py-8 sm:px-10 sm:py-10 max-w-sm w-full flex flex-col items-center relative z-10 animate-apple-float">
-        {/* Hero Visual with Ambient Glow */}
-        <div className="relative mb-3">
-          <div className="absolute inset-0 bg-[#0066cc]/30 filter blur-xl rounded-full scale-125 animate-pulse" />
-          <div className="text-6xl sm:text-7xl relative animate-apple-breathe">🩹</div>
+      {/* TOP BAR: Score Trophy + Seasonal Badge */}
+      <header className="relative z-10 flex items-center justify-between w-full max-w-lg mx-auto pt-2">
+        <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.08] backdrop-blur-xl border border-white/10 shadow-sm">
+          <span className="text-sm">🏆</span>
+          <div className="flex flex-col">
+            <span className="text-[9px] font-semibold text-white/50 tracking-wider uppercase leading-none">High Score</span>
+            <span className="text-sm font-black text-[#2997ff] leading-none mt-0.5">
+              {highScore.toLocaleString()}
+            </span>
+          </div>
         </div>
 
-        {/* Title — Apple Display Typography */}
-        <div className="text-center mb-1">
-          <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-[-0.035em] leading-tight">
+        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.08] backdrop-blur-xl border border-white/10 text-xs font-semibold text-white/90 shadow-sm">
+          <span>{seasonal.emoji}</span>
+          <span>{seasonal.name}</span>
+        </div>
+      </header>
+
+      {/* CENTER STAGE: Game Title, Hero Mascot & Primary Action */}
+      <main className="relative z-10 flex flex-col items-center justify-center my-auto w-full max-w-md mx-auto text-center px-2">
+        {/* Animated Bandage Hero Character */}
+        <div className="relative mb-3">
+          <div className="absolute inset-0 bg-[#0066cc]/40 filter blur-2xl rounded-full scale-150 animate-pulse" />
+          <div className="text-7xl sm:text-8xl relative animate-bounce">
+            🩹
+          </div>
+        </div>
+
+        {/* Title — Heavy Arcade Typography with Apple Letter-Spacing */}
+        <div className="mb-2">
+          <h1 className="text-4xl sm:text-5xl font-black text-white tracking-[-0.04em] uppercase drop-shadow-[0_4px_24px_rgba(0,0,0,0.8)]">
             Falling Fingers
           </h1>
-          <p className="text-xs text-white/50 tracking-normal mt-0.5 font-medium">
-            Rhythm Precision · Tap to Heal
+          <p className="text-xs sm:text-sm text-[#2997ff] font-bold tracking-widest uppercase mt-1">
+            Tap Broken Fingers · Beat The Clock
           </p>
         </div>
 
-        {/* Seasonal Pill */}
-        <div className="my-3">
-          <span
-            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-white/10 bg-white/[0.06] backdrop-blur-md text-[11px] font-semibold tracking-tight text-white/90 shadow-sm"
-          >
-            <span>{seasonal.emoji}</span>
-            <span>{seasonal.name}</span>
-          </span>
+        {/* Power-Up Preview HUD Pill */}
+        <div className="flex items-center justify-center gap-2 my-3 px-4 py-1.5 rounded-full bg-white/[0.05] border border-white/10 backdrop-blur-lg">
+          <span className="text-[11px] font-semibold text-white/70" title="Gold 5x">🌟 5×</span>
+          <span className="text-white/20">·</span>
+          <span className="text-[11px] font-semibold text-white/70" title="Swift Speed">⚡ Fast</span>
+          <span className="text-white/20">·</span>
+          <span className="text-[11px] font-semibold text-white/70" title="Extra Life">❤️‍🩹 Heal</span>
+          <span className="text-white/20">·</span>
+          <span className="text-[11px] font-semibold text-white/70" title="Damage Shield">🛡️ Shield</span>
+          <span className="text-white/20">·</span>
+          <span className="text-[11px] font-semibold text-white/70" title="Time Slow">🐌 Freeze</span>
         </div>
 
-        {/* Apple Segmented Control for Difficulty */}
-        <div className="w-full bg-white/[0.06] p-1 rounded-full border border-white/10 flex items-center justify-between gap-1 mb-2 backdrop-blur-xl shadow-inner">
+        {/* Arcade Difficulty Selector */}
+        <div className="w-full max-w-xs bg-black/40 backdrop-blur-2xl p-1 rounded-full border border-white/10 flex items-center justify-between gap-1 mb-2 shadow-inner">
           {difficulties.map((d) => {
             const cfg = DIFFICULTY_CONFIG[d];
             const selected = selectedDifficulty === d;
@@ -93,93 +137,97 @@ const MenuScreen = ({
               <button
                 key={d}
                 onClick={() => setSelectedDifficulty(d)}
-                className={`flex-1 py-1.5 px-2 rounded-full text-xs font-semibold tracking-tight transition-all duration-200 active:scale-95 flex items-center justify-center gap-1 ${
+                className={`flex-1 py-2 px-3 rounded-full text-xs font-bold uppercase tracking-tight transition-all duration-150 active:scale-95 flex items-center justify-center gap-1.5 ${
                   selected
-                    ? 'apple-btn-primary text-white shadow-md'
-                    : 'text-white/60 hover:text-white/90 hover:bg-white/[0.04]'
+                    ? 'bg-[#0066cc] text-white shadow-[0_2px_12px_rgba(0,102,204,0.6)] border border-[#2997ff]/50'
+                    : 'text-white/60 hover:text-white/90 hover:bg-white/[0.05]'
                 }`}
               >
-                <span className="text-xs">{cfg.emoji}</span>
+                <span>{cfg.emoji}</span>
                 <span>{cfg.label}</span>
               </button>
             );
           })}
         </div>
 
-        <div className="text-[11px] text-white/40 tracking-tight mb-5">
-          {DIFFICULTY_CONFIG[selectedDifficulty].lives} lives · {selectedDifficulty === 'easy' ? 'gentle pace' : selectedDifficulty === 'hard' ? 'intense velocity' : 'balanced speed'}
+        <div className="text-[11px] text-white/40 font-medium mb-4">
+          {DIFFICULTY_CONFIG[selectedDifficulty].lives} Lives · {selectedDifficulty === 'easy' ? 'Gentle Rhythm' : selectedDifficulty === 'hard' ? 'Insane Velocity' : 'Standard Tempo'}
         </div>
 
-        {/* Primary Action Button (Apple Pill) */}
+        {/* PRIMARY ARCADE PLAY BUTTON */}
         <button
           onClick={() => onStart('classic', selectedDifficulty)}
-          className="w-full py-3.5 px-6 rounded-full apple-btn-primary apple-pill-btn text-base font-semibold tracking-tight active:scale-[0.97] transition-all shadow-[0_8px_24px_rgba(0,102,204,0.4)]"
+          className="w-full max-w-xs py-4 px-8 rounded-full bg-[#0066cc] hover:bg-[#0071e3] text-white text-lg font-black tracking-wider uppercase shadow-[0_8px_32px_rgba(0,102,204,0.55)] active:scale-95 transition-all duration-150 border border-[#2997ff]/40 flex items-center justify-center gap-2 animate-pulse"
         >
-          Start Game
+          <span>▶</span>
+          <span>PLAY GAME</span>
         </button>
 
-        {/* Daily Challenge Pill */}
+        {/* DAILY CHALLENGE ARCADE BUTTON */}
         <button
           onClick={() => onStart('daily', selectedDifficulty)}
-          className="w-full py-2.5 px-5 mt-2.5 rounded-full apple-glass apple-pill-btn text-xs font-medium text-white/90 hover:bg-white/[0.12] active:scale-[0.97] transition flex items-center justify-center gap-2"
+          className="w-full max-w-xs py-2.5 px-6 mt-2.5 rounded-full bg-white/[0.08] hover:bg-white/[0.14] border border-white/10 text-white text-xs font-bold tracking-wider uppercase active:scale-95 transition flex items-center justify-center gap-2"
         >
           <span>📅 Daily Challenge</span>
-          <span className="text-[10px] text-white/40">· {getDailyDateString()}</span>
+          <span className="text-[10px] text-white/40">({getDailyDateString()})</span>
         </button>
+      </main>
 
-        {/* Power-up Chips (Apple Translucent Surface) */}
-        <div className="flex flex-wrap justify-center gap-1.5 mt-5 pt-4 border-t border-white/[0.08] w-full">
-          <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-white/[0.05] border border-white/[0.08] text-white/70">🌟 5× Gold</span>
-          <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-white/[0.05] border border-white/[0.08] text-white/70">⚡ Swift</span>
-          <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-white/[0.05] border border-white/[0.08] text-white/70">❤️ +1 Heal</span>
-          <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-white/[0.05] border border-white/[0.08] text-white/70">🛡️ Shield</span>
-          <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-white/[0.05] border border-white/[0.08] text-white/70">🐌 Stasis</span>
-        </div>
-
-        {/* Secondary Tool Bar (Apple Capsule Row) */}
-        <div className="flex flex-wrap justify-center gap-1.5 mt-3.5 w-full">
+      {/* BOTTOM ARCADE DOCK: Game Mode Controls */}
+      <footer className="relative z-10 w-full max-w-lg mx-auto pb-2">
+        <div className="flex flex-wrap items-center justify-center gap-2 p-2 rounded-full bg-white/[0.06] backdrop-blur-2xl border border-white/10 shadow-lg">
           <button
             onClick={onShowLeaderboard}
-            className="apple-glass apple-pill-btn text-[11px] px-3 py-1.5 text-white/80 hover:text-white hover:bg-white/[0.14]"
+            className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold text-white/80 hover:text-white hover:bg-white/10 active:scale-90 transition"
           >
-            🏆 Scores
+            🏆 <span>Scores</span>
           </button>
           <button
             onClick={onShowThemes}
-            className="apple-glass apple-pill-btn text-[11px] px-3 py-1.5 text-white/80 hover:text-white hover:bg-white/[0.14]"
+            className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold text-white/80 hover:text-white hover:bg-white/10 active:scale-90 transition"
           >
-            🎨 Themes
+            🎨 <span>Themes</span>
           </button>
           <button
             onClick={onShowTutorial}
-            className="apple-glass apple-pill-btn text-[11px] px-3 py-1.5 text-white/80 hover:text-white hover:bg-white/[0.14]"
+            className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold text-white/80 hover:text-white hover:bg-white/10 active:scale-90 transition"
           >
-            ❓ Guide
+            ❓ <span>How to Play</span>
           </button>
           <button
             onClick={onShowAchievements}
-            className="apple-glass apple-pill-btn text-[11px] px-3 py-1.5 text-white/80 hover:text-white hover:bg-white/[0.14]"
+            className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold text-white/80 hover:text-white hover:bg-white/10 active:scale-90 transition"
           >
-            🏅 Badges
+            🏅 <span>Badges</span>
           </button>
           <button
             onClick={onShowAccessibility}
-            className="apple-glass apple-pill-btn text-[11px] px-3 py-1.5 text-white/80 hover:text-white hover:bg-white/[0.14]"
+            className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold text-white/80 hover:text-white hover:bg-white/10 active:scale-90 transition"
           >
-            ♿ Access
+            ♿ <span>Options</span>
           </button>
         </div>
+      </footer>
 
-        {/* High Score Minimalist Apple Typography */}
-        {highScore > 0 && (
-          <div className="mt-4 pt-3 border-t border-white/[0.08] w-full text-center">
-            <span className="text-[10px] font-medium text-white/40 tracking-wider uppercase">Personal Best</span>
-            <div className="text-xl font-bold text-[#2997ff] tracking-tight">
-              {highScore.toLocaleString()}
-            </div>
-          </div>
-        )}
-      </div>
+      {/* Global Falling Finger Keyframe Animation */}
+      <style>{`
+        @keyframes arcade-fall {
+          0% {
+            transform: translateY(-80px) rotate(0deg);
+            opacity: 0;
+          }
+          10% {
+            opacity: 0.25;
+          }
+          90% {
+            opacity: 0.25;
+          }
+          100% {
+            transform: translateY(105vh) rotate(360deg);
+            opacity: 0;
+          }
+        }
+      `}</style>
     </div>
   );
 };

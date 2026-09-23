@@ -11,7 +11,6 @@ import { applySeasonalAccent, applyTheme, getActiveThemeId } from '@/game/themes
 import AccessibilityScreen from '@/game/AccessibilityScreen';
 import AchievementsScreen from '@/game/AchievementsScreen';
 import { applyAccessibility, getAccessibility } from '@/game/progression';
-import PlatformInspectorModal from '@/game/PlatformInspectorModal';
 import RewardedReviveModal from '@/game/RewardedReviveModal';
 
 const Index = () => {
@@ -28,7 +27,6 @@ const Index = () => {
   const [showTutorial, setShowTutorial] = useState(false);
   const [showAccessibility, setShowAccessibility] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
-  const [showPlatforms, setShowPlatforms] = useState(false);
 
   useEffect(() => {
     if (!isPlayablesReady) return;
@@ -71,7 +69,6 @@ const Index = () => {
           onShowTutorial={() => setShowTutorial(true)}
           onShowAccessibility={() => setShowAccessibility(true)}
           onShowAchievements={() => setShowAchievements(true)}
-          onShowPlatforms={() => setShowPlatforms(true)}
           highScore={highScore}
         />
       )}
@@ -122,13 +119,6 @@ const Index = () => {
           score={score}
           onRevive={handleReviveConfirm}
           onDecline={handleReviveDecline}
-        />
-      )}
-
-      {showPlatforms && (
-        <PlatformInspectorModal
-          onClose={() => setShowPlatforms(false)}
-          onRevive={handleReviveConfirm}
         />
       )}
 

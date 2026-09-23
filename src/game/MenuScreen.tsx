@@ -1,8 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Difficulty, GameMode, DIFFICULTY_CONFIG } from './types';
 import { getDailyDateString } from './dailySeed';
 import { getSeasonalEvent } from './themes';
-import { PlatformManager } from '../platforms';
 
 interface MenuScreenProps {
   onStart: (mode: GameMode, difficulty: Difficulty) => void;
@@ -11,7 +10,6 @@ interface MenuScreenProps {
   onShowTutorial: () => void;
   onShowAccessibility: () => void;
   onShowAchievements: () => void;
-  onShowPlatforms?: () => void;
   highScore: number;
 }
 
@@ -22,17 +20,9 @@ const MenuScreen = ({
   onShowTutorial,
   onShowAccessibility,
   onShowAchievements,
-  onShowPlatforms,
   highScore,
 }: MenuScreenProps) => {
   const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>('normal');
-  const [platformName, setPlatformName] = useState(() => PlatformManager.getBridge().name);
-
-  useEffect(() => {
-    return PlatformManager.onPlatformChange((bridge) => {
-      setPlatformName(bridge.name);
-    });
-  }, []);
 
   const difficulties: Difficulty[] = ['easy', 'normal', 'hard'];
   const seasonal = getSeasonalEvent();
@@ -56,18 +46,6 @@ const MenuScreen = ({
             }}
           />
         ))}
-      </div>
-
-      {/* Top Platform Runtime Pill (Apple Style) */}
-      <div className="absolute top-4 left-0 right-0 flex justify-center z-10">
-        <button
-          onClick={onShowPlatforms}
-          className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/10 backdrop-blur-xl shadow-md active:scale-95 transition text-[11px] font-semibold text-white/90"
-        >
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span>{platformName}</span>
-          <span className="text-white/40">· Switch</span>
-        </button>
       </div>
 
       {/* Hero Visual */}
@@ -181,12 +159,6 @@ const MenuScreen = ({
           className="font-display text-[11px] font-bold px-3 py-2 rounded-full bg-white/10 hover:bg-white/15 border border-white/10 text-white active:scale-95 transition tracking-wider"
         >
           ♿ ACCESS
-        </button>
-        <button
-          onClick={onShowPlatforms}
-          className="font-display text-[11px] font-bold px-3 py-2 rounded-full bg-[#0066cc]/40 hover:bg-[#0066cc]/60 border border-[#2997ff]/40 text-[#2997ff] active:scale-95 transition tracking-wider"
-        >
-          🌐 SDKs
         </button>
       </div>
 

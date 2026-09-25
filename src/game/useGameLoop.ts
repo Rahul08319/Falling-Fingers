@@ -8,10 +8,9 @@ import { getAccessibility, unlockAchievement } from './progression';
 import { BossWaveState } from './GameProgressPanel';
 import {
   getPlayablesLanguage, loadPlayablesSave, notifyFirstFrameReady, notifyGameReady,
-  PLAYABLES_SAVE_EVENT, reportPlayablesError, requestPlayablesSave,
-  savePlayablesData, sendPlayablesScore, requestInterstitialAd,
+  PLAYABLES_SAVE_EVENT, reportPlayablesError, requestPlayablesSave, isAudioEnabled,
+  savePlayablesData, sendPlayablesScore,
 } from './playables';
-import { PlatformManager } from '../platforms';
 
 const SPAWN_INTERVAL_BASE = 1200;
 const SPAWN_INTERVAL_MIN = 400;
@@ -72,8 +71,6 @@ export function useGameLoop() {
   const [floatingPowerUps, setFloatingPowerUps] = useState<FloatingPowerUp[]>([]);
   const [missionProgress, setMissionProgress] = useState(0);
   const [bossWave, setBossWave] = useState<BossWaveState | null>(null);
-  const [showReviveModal, setShowReviveModal] = useState(false);
-  const hasRevivedRef = useRef(false);
   const adaptiveDifficultyRef = useRef(1);
 
   const animFrameRef = useRef<number>(0);
@@ -111,11 +108,9 @@ export function useGameLoop() {
       if (!active) return;
       setHighScore(parseInt(localStorage.getItem('falling-fingers-high') || '0', 10));
 
-      const bridge = PlatformManager.getBridge();
-      await bridge.initialize();
-      musicRef.current.setSystemAudio(bridge.isAudioEnabled());
-      removeAudioListener = bridge.onAudioEnabledChange((enabled) => musicRef.current.setSystemAudio(enabled));
-      removePauseListener = bridge.onPause(() => {
+      musicRef.current.setSystemAudio(isAudioEnabled());
+      removeAudioListener = window.ytgame?.system?.onAudioEnabledChange?.((enabled) => musicRef.current.setSystemAudio(enabled)) ?? undefined;
+      removePauseListener = window.ytgame?.system?.onPause?.(() => {
         if (gameStateRef.current === 'playing') {
           pausedBySystemRef.current = true;
           setIsSystemPaused(true);
@@ -124,7 +119,7 @@ export function useGameLoop() {
         }
         requestPlayablesSave();
       });
-      removeResumeListener = bridge.onResume(() => {
+      removeResumeListener = window.ytgame?.system?.onResume?.(() => {
         if (pausedBySystemRef.current && gameStateRef.current === 'paused') {
           pausedBySystemRef.current = false;
           setIsSystemPaused(false);
@@ -302,8 +297,6 @@ export function useGameLoop() {
     setMissionProgress(0);
     setBossWave(null);
     adaptiveDifficultyRef.current = 1;
-    hasRevivedRef.current = false;
-    setShowReviveModal(false);
     bossSpawnedRef.current = null;
     setIsNewHighScore(false);
     setShowInitials(false);
@@ -347,9 +340,7 @@ export function useGameLoop() {
     setBossWave(null);
     setShowLeaderboard(false);
     setShowInitials(false);
-    setShowReviveModal(false);
     music.stopMusic();
-    void requestInterstitialAd();
   }, [music]);
 
   const togglePause = useCallback(() => {
@@ -378,7 +369,6 @@ export function useGameLoop() {
 
   const endGame = useCallback((finalScore: number) => {
     setGameState('gameover');
-    setShowReviveModal(false);
     sfx.playGameOver();
     music.stopMusic();
     const prev = parseInt(localStorage.getItem('falling-fingers-high') || '0', 10);
@@ -395,24 +385,7 @@ export function useGameLoop() {
     if (gameMode === 'daily') unlockAchievement('daily-finish');
     sendPlayablesScore(finalScore);
     requestPlayablesSave();
-    void requestInterstitialAd();
   }, [sfx, music, gameMode]);
-
-  const handleReviveConfirm = useCallback(() => {
-    hasRevivedRef.current = true;
-    setShowReviveModal(false);
-    setLives(1);
-    livesRef.current = 1;
-    const now = Date.now();
-    setPowerUps(prev => [...prev, { type: 'shield', active: true, duration: 3500, startTime: now }]);
-    setGameState('playing');
-    music.startMusic();
-  }, [music]);
-
-  const handleReviveDecline = useCallback(() => {
-    setShowReviveModal(false);
-    endGame(scoreRef.current);
-  }, [endGame]);
 
   const submitInitials = useCallback((initials: string) => {
     addToLeaderboard({
@@ -562,13 +535,7 @@ export function useGameLoop() {
         setLives(l => {
           const newLives = l - 1;
           if (newLives <= 0) {
-            if (!hasRevivedRef.current) {
-              setGameState('paused');
-              music.stopMusic();
-              setShowReviveModal(true);
-            } else {
-              endGame(scoreRef.current);
-            }
+            endGame(scoreRef.current);
           }
           return newLives;
         });
@@ -661,13 +628,7 @@ export function useGameLoop() {
           setLives(l => {
             const newLives = l - 1;
             if (newLives <= 0) {
-              if (!hasRevivedRef.current) {
-                setGameState('paused');
-                music.stopMusic();
-                setShowReviveModal(true);
-              } else {
-                endGame(scoreRef.current);
-              }
+              endGame(scoreRef.current);
             }
             return newLives;
           });
@@ -723,9 +684,6 @@ export function useGameLoop() {
     removeParticle,
     submitInitials,
     setShowLeaderboard,
-    showReviveModal,
-    handleReviveConfirm,
-    handleReviveDecline,
     collectPowerUp,
   };
 }

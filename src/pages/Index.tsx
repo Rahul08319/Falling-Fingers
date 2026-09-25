@@ -11,7 +11,6 @@ import { applySeasonalAccent, applyTheme, getActiveThemeId } from '@/game/themes
 import AccessibilityScreen from '@/game/AccessibilityScreen';
 import AchievementsScreen from '@/game/AchievementsScreen';
 import { applyAccessibility, getAccessibility } from '@/game/progression';
-import RewardedReviveModal from '@/game/RewardedReviveModal';
 
 const Index = () => {
   const {
@@ -20,7 +19,6 @@ const Index = () => {
     showLeaderboard, showInitials, difficulty, gameMode, powerUps, floatingPowerUps, missionProgress, bossWave,
     music, isPlayablesReady, isSystemPaused, startGame, goToMenu, togglePause, toggleMute, handleTap, removeParticle,
     submitInitials, setShowLeaderboard, collectPowerUp,
-    showReviveModal, handleReviveConfirm, handleReviveDecline,
   } = useGameLoop();
 
   const [showThemes, setShowThemes] = useState(false);
@@ -111,14 +109,6 @@ const Index = () => {
           onMenu={goToMenu}
           onSubmitInitials={submitInitials}
           onShowLeaderboard={() => setShowLeaderboard(true)}
-        />
-      )}
-
-      {showReviveModal && (
-        <RewardedReviveModal
-          score={score}
-          onRevive={handleReviveConfirm}
-          onDecline={handleReviveDecline}
         />
       )}
 

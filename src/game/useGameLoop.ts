@@ -6,6 +6,7 @@ import { isLeaderboardWorthy, addToLeaderboard } from './Leaderboard';
 import { createSeededRandom, getDailySeed } from './dailySeed';
 import { getAccessibility, unlockAchievement } from './progression';
 import { BossWaveState } from './GameProgressPanel';
+import { getLevelConfig, saveLevelClear, loadLevelProgress, LevelConfig } from './levels';
 import {
   getPlayablesLanguage, loadPlayablesSave, notifyFirstFrameReady, notifyGameReady,
   PLAYABLES_SAVE_EVENT, reportPlayablesError, requestPlayablesSave, isAudioEnabled,
@@ -73,6 +74,13 @@ export function useGameLoop() {
   const [bossWave, setBossWave] = useState<BossWaveState | null>(null);
   const adaptiveDifficultyRef = useRef(1);
 
+  // 100+ Level Campaign System States
+  const [campaignLevel, setCampaignLevel] = useState<number>(() => {
+    return loadLevelProgress().unlockedLevel;
+  });
+  const [levelFixes, setLevelFixes] = useState<number>(0);
+  const [levelClearResult, setLevelClearResult] = useState<{ starsEarned: number; isNewUnlock: boolean; nextLevel: number } | null>(null);
+
   const animFrameRef = useRef<number>(0);
   const lastSpawnRef = useRef(0);
   const scoreRef = useRef(0);
@@ -86,6 +94,9 @@ export function useGameLoop() {
   const musicRef = useRef(music);
   const pausedBySystemRef = useRef(false);
   const bossSpawnedRef = useRef<number | null>(null);
+  const campaignLevelRef = useRef(campaignLevel);
+  const levelFixesRef = useRef(0);
+  const gameModeRef = useRef<GameMode>('classic');
 
   useEffect(() => { scoreRef.current = score; }, [score]);
   useEffect(() => { livesRef.current = lives; }, [lives]);
@@ -93,6 +104,9 @@ export function useGameLoop() {
   useEffect(() => { gameStateRef.current = gameState; }, [gameState]);
   useEffect(() => { difficultyRef.current = difficulty; }, [difficulty]);
   useEffect(() => { musicRef.current = music; }, [music]);
+  useEffect(() => { campaignLevelRef.current = campaignLevel; }, [campaignLevel]);
+  useEffect(() => { levelFixesRef.current = levelFixes; }, [levelFixes]);
+  useEffect(() => { gameModeRef.current = gameMode; }, [gameMode]);
 
   useEffect(() => {
     let active = true;
@@ -228,19 +242,37 @@ export function useGameLoop() {
   }, []);
 
   const spawnFinger = useCallback(() => {
-    const lvl = getLevel(scoreRef.current);
+    let speed: number;
+    let brokenChance: number;
+    let goldenChance = 0.08;
+    let speedFingerChance = 0.10;
+    let healChance = 0.05;
+
     const rand = getRand;
-    const brokenChance = Math.min(BROKEN_CHANCE_BASE + lvl * 0.03, BROKEN_CHANCE_MAX);
-    const isBroken = rand() < brokenChance;
     const cfg = DIFFICULTY_CONFIG[difficultyRef.current];
-    const speed = (SPEED_BASE + lvl * SPEED_INCREMENT + rand() * 0.15) * cfg.speedMult;
+
+    if (gameModeRef.current === 'levels') {
+      const lvlCfg = getLevelConfig(campaignLevelRef.current);
+      speed = (lvlCfg.baseSpeed + rand() * 0.12) * cfg.speedMult;
+      brokenChance = lvlCfg.brokenChance;
+      goldenChance = lvlCfg.goldenChance;
+      speedFingerChance = lvlCfg.speedFingerChance;
+      healChance = lvlCfg.healChance;
+    } else {
+      const lvl = getLevel(scoreRef.current);
+      brokenChance = Math.min(BROKEN_CHANCE_BASE + lvl * 0.03, BROKEN_CHANCE_MAX);
+      speed = (SPEED_BASE + lvl * SPEED_INCREMENT + rand() * 0.15) * cfg.speedMult;
+      if (lvl < 3) healChance = 0;
+    }
+
+    const isBroken = rand() < brokenChance;
 
     let specialType: FingerSpecialType = 'normal';
     if (isBroken) {
       const roll = rand();
-      if (roll < 0.08) specialType = 'golden';
-      else if (roll < 0.18) specialType = 'speed';
-      else if (roll < 0.23 && lvl >= 3) specialType = 'heal';
+      if (roll < goldenChance) specialType = 'golden';
+      else if (roll < goldenChance + speedFingerChance) specialType = 'speed';
+      else if (roll < goldenChance + speedFingerChance + healChance) specialType = 'heal';
     }
 
     const finger: Finger = {
@@ -280,7 +312,7 @@ export function useGameLoop() {
     ]);
   }, [bossWave]);
 
-  const startGame = useCallback((mode: GameMode = 'classic', diff: Difficulty = 'normal') => {
+  const startGame = useCallback((mode: GameMode = 'classic', diff: Difficulty = 'normal', targetLevel?: number) => {
     const cfg = DIFFICULTY_CONFIG[diff];
     setDifficulty(diff);
     setGameMode(mode);
@@ -305,6 +337,18 @@ export function useGameLoop() {
     comboRef.current = 0;
     lastSpawnRef.current = 0;
     difficultyRef.current = diff;
+    gameModeRef.current = mode;
+
+    if (mode === 'levels') {
+      const selectedLvl = targetLevel || campaignLevelRef.current || 1;
+      setCampaignLevel(selectedLvl);
+      campaignLevelRef.current = selectedLvl;
+      setLevelFixes(0);
+      levelFixesRef.current = 0;
+      setLevelClearResult(null);
+    } else {
+      setLevelClearResult(null);
+    }
 
     if (mode === 'daily') {
       seededRandRef.current = createSeededRandom(getDailySeed());
@@ -340,8 +384,20 @@ export function useGameLoop() {
     setBossWave(null);
     setShowLeaderboard(false);
     setShowInitials(false);
+    setLevelClearResult(null);
     music.stopMusic();
   }, [music]);
+
+  const startNextLevel = useCallback(() => {
+    const nextLvl = campaignLevelRef.current + 1;
+    setCampaignLevel(nextLvl);
+    campaignLevelRef.current = nextLvl;
+    startGame('levels', difficultyRef.current, nextLvl);
+  }, [startGame]);
+
+  const replayCurrentLevel = useCallback(() => {
+    startGame('levels', difficultyRef.current, campaignLevelRef.current);
+  }, [startGame]);
 
   const togglePause = useCallback(() => {
     if (pausedBySystemRef.current) return;
@@ -505,6 +561,29 @@ export function useGameLoop() {
           return newScore;
         });
 
+        // 100+ Level Campaign Mode check
+        if (gameModeRef.current === 'levels') {
+          const currentFixes = levelFixesRef.current + 1;
+          levelFixesRef.current = currentFixes;
+          setLevelFixes(currentFixes);
+
+          const lvlCfg = getLevelConfig(campaignLevelRef.current);
+          if (currentFixes >= lvlCfg.targetFixes) {
+            const finalScore = scoreRef.current + points;
+            const clearRes = saveLevelClear(campaignLevelRef.current, finalScore, currentCombo);
+            sfx.playLevelClear();
+            music.stopMusic();
+            setLevelClearResult({
+              starsEarned: clearRes.starsEarned,
+              isNewUnlock: clearRes.isNewUnlock,
+              nextLevel: campaignLevelRef.current + 1,
+            });
+            setGameState('levelclear');
+            void requestInterstitialAd();
+            requestPlayablesSave();
+          }
+        }
+
         setTimeout(() => {
           setFingers(p => p.filter(f => f.id !== id));
         }, FIXED_DISPLAY_TIME);
@@ -542,7 +621,7 @@ export function useGameLoop() {
         return prev.filter(f => f.id !== id);
       }
     });
-  }, [endGame, getLevel, getComboMultiplier, addPopup, addParticle, triggerShake, sfx, powerUps, consumeShield, consumePowerUp]);
+  }, [endGame, getLevel, getComboMultiplier, addPopup, addParticle, triggerShake, sfx, music, powerUps, consumeShield, consumePowerUp]);
 
   // Update power-up expiration
   useEffect(() => {
@@ -568,7 +647,13 @@ export function useGameLoop() {
 
       const lvl = getLevel(scoreRef.current);
       const cfg = DIFFICULTY_CONFIG[difficultyRef.current];
-      const spawnInterval = Math.max((SPAWN_INTERVAL_BASE * cfg.spawnMult - lvl * 60) / adaptiveDifficultyRef.current, SPAWN_INTERVAL_MIN);
+      let spawnInterval: number;
+      if (gameModeRef.current === 'levels') {
+        const lvlCfg = getLevelConfig(campaignLevelRef.current);
+        spawnInterval = Math.max((lvlCfg.spawnInterval * cfg.spawnMult) / adaptiveDifficultyRef.current, SPAWN_INTERVAL_MIN);
+      } else {
+        spawnInterval = Math.max((SPAWN_INTERVAL_BASE * cfg.spawnMult - lvl * 60) / adaptiveDifficultyRef.current, SPAWN_INTERVAL_MIN);
+      }
 
       if (now - lastSpawnRef.current > spawnInterval) {
         lastSpawnRef.current = now;
@@ -685,5 +770,9 @@ export function useGameLoop() {
     submitInitials,
     setShowLeaderboard,
     collectPowerUp,
+    campaignLevel,
+    levelClearResult,
+    startNextLevel,
+    replayCurrentLevel,
   };
 }

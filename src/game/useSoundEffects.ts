@@ -68,5 +68,12 @@ export function useSoundEffects(isAudioEnabled = true) {
     playTone(880, 0.25, 'sine', 0.12);
   }, [playTone]);
 
-  return { playTap, playFix, playGoldenFix, playLoseLife, playGameOver, playCombo, playCountdown, playGo };
+  const playLevelClear = useCallback(() => {
+    playTone(523, 0.1, 'sine', 0.14);
+    setTimeout(() => playTone(659, 0.1, 'sine', 0.14), 80);
+    setTimeout(() => playTone(784, 0.12, 'sine', 0.14), 160);
+    setTimeout(() => playTone(1046, 0.35, 'triangle', 0.18), 240);
+  }, [playTone]);
+
+  return { playTap, playFix, playGoldenFix, playLoseLife, playGameOver, playCombo, playCountdown, playGo, playLevelClear };
 }

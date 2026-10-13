@@ -14,11 +14,11 @@ export interface Finger {
 
 export type FingerSpecialType = 'normal' | 'golden' | 'speed' | 'heal';
 
-export type GameState = 'menu' | 'countdown' | 'playing' | 'paused' | 'gameover';
+export type GameState = 'menu' | 'countdown' | 'playing' | 'paused' | 'gameover' | 'levelclear';
 
 export type Difficulty = 'easy' | 'normal' | 'hard';
 
-export type GameMode = 'classic' | 'daily';
+export type GameMode = 'classic' | 'daily' | 'levels';
 
 export type PowerUpType = 'shield' | 'slowmo' | 'magnet' | 'freeze' | 'comboShield';
 

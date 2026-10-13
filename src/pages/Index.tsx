@@ -11,6 +11,8 @@ import { applySeasonalAccent, applyTheme, getActiveThemeId } from '@/game/themes
 import AccessibilityScreen from '@/game/AccessibilityScreen';
 import AchievementsScreen from '@/game/AchievementsScreen';
 import { applyAccessibility, getAccessibility } from '@/game/progression';
+import LevelClearModal from '@/game/LevelClearModal';
+import LevelSelectScreen from '@/game/LevelSelectScreen';
 
 const Index = () => {
   const {
@@ -19,12 +21,14 @@ const Index = () => {
     showLeaderboard, showInitials, difficulty, gameMode, powerUps, floatingPowerUps, missionProgress, bossWave,
     music, isPlayablesReady, isSystemPaused, startGame, goToMenu, togglePause, toggleMute, handleTap, removeParticle,
     submitInitials, setShowLeaderboard, collectPowerUp,
+    campaignLevel, levelClearResult, startNextLevel, replayCurrentLevel,
   } = useGameLoop();
 
   const [showThemes, setShowThemes] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
   const [showAccessibility, setShowAccessibility] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
+  const [showLevelSelect, setShowLevelSelect] = useState(false);
 
   useEffect(() => {
     if (!isPlayablesReady) return;
@@ -35,7 +39,27 @@ const Index = () => {
   }, [isPlayablesReady]);
 
   if (!isPlayablesReady) {
-    return <div className="playables-viewport bg-background flex items-center justify-center"><span className="font-display text-sm tracking-[0.3em] text-primary animate-pulse">LOADING…</span></div>;
+    return (
+      <div className="playables-viewport bg-background flex items-center justify-center">
+        <span className="font-display text-sm tracking-[0.3em] text-primary animate-pulse">
+          LOADING…
+        </span>
+      </div>
+    );
+  }
+
+  if (showLevelSelect) {
+    return (
+      <div className="playables-viewport bg-background">
+        <LevelSelectScreen
+          onSelectLevel={(lvl) => {
+            setShowLevelSelect(false);
+            startGame('levels', difficulty, lvl);
+          }}
+          onClose={() => setShowLevelSelect(false)}
+        />
+      </div>
+    );
   }
 
   if (showThemes) {
@@ -46,8 +70,21 @@ const Index = () => {
     );
   }
 
-  if (showAccessibility) return <div className="playables-viewport bg-background"><AccessibilityScreen onClose={() => setShowAccessibility(false)} /></div>;
-  if (showAchievements) return <div className="playables-viewport bg-background"><AchievementsScreen onClose={() => setShowAchievements(false)} /></div>;
+  if (showAccessibility) {
+    return (
+      <div className="playables-viewport bg-background">
+        <AccessibilityScreen onClose={() => setShowAccessibility(false)} />
+      </div>
+    );
+  }
+
+  if (showAchievements) {
+    return (
+      <div className="playables-viewport bg-background">
+        <AchievementsScreen onClose={() => setShowAchievements(false)} />
+      </div>
+    );
+  }
 
   if (showLeaderboard) {
     return (
@@ -62,6 +99,7 @@ const Index = () => {
       {gameState === 'menu' && (
         <MenuScreen
           onStart={startGame}
+          onShowLevels={() => setShowLevelSelect(true)}
           onShowLeaderboard={() => setShowLeaderboard(true)}
           onShowThemes={() => setShowThemes(true)}
           onShowTutorial={() => setShowTutorial(true)}
@@ -105,10 +143,28 @@ const Index = () => {
           maxCombo={maxCombo}
           showInitials={showInitials}
           gameMode={gameMode}
-          onRestart={() => startGame(gameMode, difficulty)}
+          onRestart={() => startGame(gameMode, difficulty, campaignLevel)}
           onMenu={goToMenu}
           onSubmitInitials={submitInitials}
           onShowLeaderboard={() => setShowLeaderboard(true)}
+        />
+      )}
+
+      {/* 100+ Levels Campaign Victory Screen with Apple Frosted Glass */}
+      {gameState === 'levelclear' && levelClearResult && (
+        <LevelClearModal
+          level={campaignLevel}
+          score={score}
+          maxCombo={maxCombo}
+          starsEarned={levelClearResult.starsEarned}
+          isNewUnlock={levelClearResult.isNewUnlock}
+          onNextLevel={startNextLevel}
+          onReplay={replayCurrentLevel}
+          onLevelSelect={() => {
+            goToMenu();
+            setShowLevelSelect(true);
+          }}
+          onMenu={goToMenu}
         />
       )}
 

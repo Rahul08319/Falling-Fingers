@@ -5,6 +5,7 @@ import { getSeasonalEvent } from './themes';
 
 interface MenuScreenProps {
   onStart: (mode: GameMode, difficulty: Difficulty) => void;
+  onShowLevels?: () => void;
   onShowLeaderboard: () => void;
   onShowThemes: () => void;
   onShowTutorial: () => void;
@@ -15,6 +16,7 @@ interface MenuScreenProps {
 
 const MenuScreen = ({
   onStart,
+  onShowLevels,
   onShowLeaderboard,
   onShowThemes,
   onShowTutorial,
@@ -163,10 +165,21 @@ const MenuScreen = ({
           <span>PLAY GAME</span>
         </button>
 
+        {/* 100+ LEVELS CAMPAIGN MAP (Apple Translucent Material) */}
+        {onShowLevels && (
+          <button
+            onClick={onShowLevels}
+            className="w-full max-w-xs py-3 px-6 mt-2.5 rounded-full bg-gradient-to-r from-emerald-500/20 via-[#0066cc]/25 to-purple-500/20 hover:from-emerald-500/30 hover:to-purple-500/30 border border-emerald-400/40 text-white text-xs font-black tracking-wider uppercase active:scale-95 transition-all shadow-[0_4px_20px_rgba(48,209,88,0.25)] flex items-center justify-center gap-2"
+          >
+            <span>🗺️ 100+ Levels Campaign</span>
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/30 text-emerald-300 font-bold">10 WORLDS</span>
+          </button>
+        )}
+
         {/* DAILY CHALLENGE ARCADE BUTTON */}
         <button
           onClick={() => onStart('daily', selectedDifficulty)}
-          className="w-full max-w-xs py-2.5 px-6 mt-2.5 rounded-full bg-white/[0.08] hover:bg-white/[0.14] border border-white/10 text-white text-xs font-bold tracking-wider uppercase active:scale-95 transition flex items-center justify-center gap-2"
+          className="w-full max-w-xs py-2.5 px-6 mt-2 rounded-full bg-white/[0.08] hover:bg-white/[0.14] border border-white/10 text-white text-xs font-bold tracking-wider uppercase active:scale-95 transition flex items-center justify-center gap-2"
         >
           <span>📅 Daily Challenge</span>
           <span className="text-[10px] text-white/40">({getDailyDateString()})</span>

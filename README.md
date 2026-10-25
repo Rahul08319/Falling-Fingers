@@ -6,6 +6,8 @@
 
 [![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Apple Design](https://img.shields.io/badge/Apple_Design-HIG_2026-0066cc?logo=apple&logoColor=white)](https://developer.apple.com/design/)
+[![Fluid Motion](https://img.shields.io/badge/Motion-Fluid_Spring_Physics-2997ff)](https://developer.apple.com/design/)
 [![YouTube Playables](https://img.shields.io/badge/YouTube-Playables-FF0000?logo=youtube&logoColor=white)](https://developers.google.com/youtube/gaming/playables)
 
 **Tap the broken fingers. Protect your combo. Survive the next wave.**
@@ -82,6 +84,16 @@ npm run build
 ```
 
 The production game bundle is created in `dist/`.
+
+##  Apple Design System & Fluid Motion Physics
+
+Falling Fingers is calibrated to Apple Human Interface Guidelines (HIG):
+
+- **SF Pro Display & Text Typography**: Strict negative letter-spacing for sharp, high-speed readability.
+- **Action Blue (`#0066cc`) & Action Blue Light (`#2997ff`)**: Clear visual affordances across interactive HUD elements.
+- **Fluid Spring Motion**: Critically damped spring curves (`cubic-bezier(0.16, 1, 0.3, 1)`) for instantaneous touch response.
+- **Haptic Tactile Feedback**: Tap targets respond with `transform: scale(0.95)` on `:active` with sub-100ms spring return.
+- **Dark Museum Tile Palette**: Deep slate canvases (`#272729` / `#2a2a2c`) allowing finger indicators and neon combos to pop with maximum visual contrast.
 
 ## Game architecture
 

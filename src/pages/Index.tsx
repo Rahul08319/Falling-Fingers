@@ -21,7 +21,7 @@ const Index = () => {
     showLeaderboard, showInitials, difficulty, gameMode, powerUps, floatingPowerUps, missionProgress, bossWave,
     music, isPlayablesReady, isSystemPaused, startGame, goToMenu, togglePause, toggleMute, handleTap, removeParticle,
     submitInitials, setShowLeaderboard, collectPowerUp,
-    campaignLevel, levelClearResult, startNextLevel, replayCurrentLevel,
+    campaignLevel, levelFixes, levelClearResult, startNextLevel, replayCurrentLevel,
   } = useGameLoop();
 
   const [showThemes, setShowThemes] = useState(false);
@@ -127,6 +127,8 @@ const Index = () => {
           missionProgress={missionProgress}
           bossWave={bossWave}
           gameMode={gameMode}
+          campaignLevel={campaignLevel}
+          levelFixes={levelFixes}
           onTap={handleTap}
           onPause={togglePause}
           onResume={togglePause}
@@ -143,6 +145,8 @@ const Index = () => {
           maxCombo={maxCombo}
           showInitials={showInitials}
           gameMode={gameMode}
+          campaignLevel={campaignLevel}
+          levelFixes={levelFixes}
           onRestart={() => startGame(gameMode, difficulty, campaignLevel)}
           onMenu={goToMenu}
           onSubmitInitials={submitInitials}

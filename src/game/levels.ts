@@ -122,7 +122,7 @@ export function loadLevelProgress(): LevelProgress {
   }
 }
 
-export function saveLevelClear(level: number, score: number, combo: number, livesLeft: number): { starsEarned: number; isNewUnlock: boolean; nextLevel: number } {
+export function saveLevelClear(level: number, score: number, combo: number, livesLeft: number = 3): { starsEarned: number; isNewUnlock: boolean; nextLevel: number } {
   const current = loadLevelProgress();
   const config = getLevelConfig(level);
 

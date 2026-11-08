@@ -28,6 +28,8 @@ interface GameScreenProps {
   missionProgress: number;
   bossWave: BossWaveState | null;
   gameMode: string;
+  campaignLevel?: number;
+  levelFixes?: number;
   onTap: (id: string) => void;
   onPause: () => void;
   onResume: () => void;
@@ -37,9 +39,30 @@ interface GameScreenProps {
 }
 
 const GameScreen = ({
-  fingers, score, lives, level, combo, comboPopups, particles,
-  isPaused, isSystemPaused, screenShake, isMuted, powerUps, floatingPowerUps, missionProgress, bossWave, gameMode,
-  onTap, onPause, onResume, onRemoveParticle, onToggleMute, onCollectPowerUp,
+  fingers,
+  score,
+  lives,
+  level,
+  combo,
+  comboPopups,
+  particles,
+  isPaused,
+  isSystemPaused,
+  screenShake,
+  isMuted,
+  powerUps,
+  floatingPowerUps,
+  missionProgress,
+  bossWave,
+  gameMode,
+  campaignLevel,
+  levelFixes,
+  onTap,
+  onPause,
+  onResume,
+  onRemoveParticle,
+  onToggleMute,
+  onCollectPowerUp,
 }: GameScreenProps) => {
   const shieldActive = powerUps.some(p => p.type === 'shield' && p.active);
   const slowMoActive = powerUps.some(p => p.type === 'slowmo' && p.active);
@@ -115,14 +138,21 @@ const GameScreen = ({
       <GameHUD
         score={score}
         lives={lives}
-        level={level}
+        level={gameMode === 'levels' && campaignLevel ? campaignLevel : level}
         combo={combo}
         isMuted={isMuted}
         onPause={onPause}
         onToggleMute={onToggleMute}
       />
 
-      <GameProgressPanel score={score} missionProgress={missionProgress} bossWave={bossWave} />
+      <GameProgressPanel
+        score={score}
+        missionProgress={missionProgress}
+        bossWave={bossWave}
+        gameMode={gameMode}
+        campaignLevel={campaignLevel}
+        levelFixes={levelFixes}
+      />
 
       {fingers.map(finger => (
         <FingerSprite key={finger.id} finger={finger} onTap={onTap} largerTargets={largerTargets} />

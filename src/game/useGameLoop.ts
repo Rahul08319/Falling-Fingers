@@ -570,7 +570,7 @@ export function useGameLoop() {
           const lvlCfg = getLevelConfig(campaignLevelRef.current);
           if (currentFixes >= lvlCfg.targetFixes) {
             const finalScore = scoreRef.current + points;
-            const clearRes = saveLevelClear(campaignLevelRef.current, finalScore, currentCombo);
+            const clearRes = saveLevelClear(campaignLevelRef.current, finalScore, currentCombo, livesRef.current);
             sfx.playLevelClear();
             music.stopMusic();
             setLevelClearResult({
@@ -771,6 +771,7 @@ export function useGameLoop() {
     setShowLeaderboard,
     collectPowerUp,
     campaignLevel,
+    levelFixes,
     levelClearResult,
     startNextLevel,
     replayCurrentLevel,
